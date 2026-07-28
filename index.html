@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dentee | All-in-One Dental Clinic Management System</title>
+  <meta name="description" content="Dental Practice Management — Pro & Premium plans with Patient Records, Appointments, Treatment Plans, GST Billing, Insurance, Tooth Chart, AI, and more.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div id="app-layout">
+    
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">🦷</div>
+        <div>
+          <div class="brand-name">Dentee</div>
+          <div style="font-size:0.65rem; color:var(--text-muted); font-weight:700;">CLINIC OS</div>
+        </div>
+        <div class="brand-tag brand-tag-premium" id="brand-tag">PREMIUM</div>
+      </div>
+
+      <nav class="sidebar-menu" id="sidebar-menu">
+        <!-- Rendered dynamically by app.js from planConfig.js -->
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="doctor-profile-card">
+          <div class="doctor-avatar">SJ</div>
+          <div class="doctor-info">
+            <div class="doctor-name">Dr. S. Jenkins</div>
+            <div class="doctor-role">Chief Dental Surgeon</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      
+      <header class="top-header">
+        <div class="header-left">
+          <div class="patient-quick-select" onclick="app.navigateTo('patients')">
+            <span>👤 Active Patient:</span>
+            <span id="active-patient-name">Sophia Martinez (P-1001)</span>
+            <span style="font-size:0.7rem;">▼</span>
+          </div>
+
+          <div style="margin-left:1rem; display:inline-block;">
+            <select class="form-control" style="padding:4px 8px; font-size:0.8rem; background:var(--bg-surface); color:var(--text-color); border:1px solid var(--border-color); border-radius:6px;" onchange="app.showToast('Active Clinic Context: ' + this.options[this.selectedIndex].text)">
+              <option value="BR-01">🏥 Beverly Hills Central (HQ)</option>
+              <option value="BR-02">🏥 Westside Implant & Ortho</option>
+              <option value="BR-03">🏥 Downtown Smile Hub</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <select id="plan-select" class="form-control plan-select" onchange="app.togglePlan(this.value)" title="Switch Pro / Premium plan">
+            <option value="pro">Pro Plan</option>
+            <option value="premium" selected>Premium Plan</option>
+          </select>
+
+          <button class="btn btn-secondary btn-sm" id="btn-patient-portal" onclick="app.navigateTo('patient-portal')" title="Launch Patient View">
+            📱 Patient Portal
+          </button>
+
+          <button class="icon-btn" title="Toggle Light/Dark Theme" onclick="app.toggleTheme()">
+            🌓
+          </button>
+          
+          <button class="btn btn-secondary btn-sm" onclick="app.resetDemoData()" title="Reset Demo Data">
+            🔄 Reset Demo
+          </button>
+        </div>
+      </header>
+
+      <main class="content-area">
+        
+        <div id="patients-module" class="page-view active"></div>
+        <div id="appointments-module" class="page-view"></div>
+        <div id="calendar-module" class="page-view"></div>
+        <div id="treatment-plan-module" class="page-view"></div>
+        <div id="billing-module" class="page-view"></div>
+        <div id="insurance-module" class="page-view"></div>
+
+        <div id="tooth-chart-module" class="page-view"></div>
+        <div id="xray-module" class="page-view"></div>
+        <div id="prescription-module" class="page-view"></div>
+        <div id="inventory-module" class="page-view"></div>
+        <div id="lab-module" class="page-view"></div>
+        <div id="crm-module" class="page-view"></div>
+        <div id="ai-assistant-module" class="page-view"></div>
+        <div id="multi-clinic-module" class="page-view"></div>
+        <div id="staff-module" class="page-view"></div>
+        <div id="patient-portal-module" class="page-view"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="global-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Modal Title</h3>
+        <button class="close-btn" onclick="app.closeModal()">✕</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="js/seedData.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/planConfig.js"></script>
+  
+  <script src="js/modules/patients.js"></script>
+  <script src="js/modules/appointments.js"></script>
+  <script src="js/modules/calendar.js"></script>
+  <script src="js/modules/treatmentPlan.js"></script>
+  <script src="js/modules/billing.js"></script>
+  <script src="js/modules/insurance.js"></script>
+
+  <script src="js/modules/toothChart.js"></script>
+  <script src="js/modules/xray.js"></script>
+  <script src="js/modules/prescription.js"></script>
+  <script src="js/modules/inventory.js"></script>
+  <script src="js/modules/lab.js"></script>
+  <script src="js/modules/crm.js"></script>
+  <script src="js/modules/aiAssistant.js"></script>
+  <script src="js/modules/multiClinic.js"></script>
+  <script src="js/modules/staff.js"></script>
+  <script src="js/modules/patientPortal.js"></script>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
