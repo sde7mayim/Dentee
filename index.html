@@ -6,12 +6,19 @@
   <title>Dentee | All-in-One Dental Clinic Management System</title>
   <meta name="description" content="Dental Practice Management — Pro & Premium plans with Patient Records, Appointments, Treatment Plans, GST Billing, Insurance, Tooth Chart, AI, and more.">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/glassmorphism.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
   <div id="app-layout">
     
-    <aside class="sidebar">
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="app.toggleMobileSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="brand-logo">🦷</div>
         <div>
@@ -19,6 +26,18 @@
           <div style="font-size:0.65rem; color:var(--text-muted); font-weight:700;">CLINIC OS</div>
         </div>
         <div class="brand-tag brand-tag-premium" id="brand-tag">PREMIUM</div>
+      </div>
+
+      <!-- Favorites Section -->
+      <div id="sidebar-favorites" style="padding:0.5rem 0.75rem; border-bottom:1px solid var(--border-color); flex-shrink:0;">
+        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px; margin-bottom:0.35rem;">⭐ Favorites</div>
+        <div id="favorites-list" style="display:flex; flex-direction:column; gap:2px;"></div>
+      </div>
+
+      <!-- Recent Patients Section -->
+      <div id="sidebar-recent" style="padding:0.5rem 0.75rem; border-bottom:1px solid var(--border-color); flex-shrink:0;">
+        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px; margin-bottom:0.35rem;">📌 Recent Patients</div>
+        <div id="recent-patients-list" style="display:flex; flex-direction:column; gap:2px;"></div>
       </div>
 
       <nav class="sidebar-menu" id="sidebar-menu">
@@ -36,10 +55,14 @@
       </div>
     </aside>
 
+    <!-- Main Wrapper -->
     <div class="main-wrapper">
       
       <header class="top-header">
         <div class="header-left">
+          <!-- Mobile Hamburger -->
+          <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="app.toggleMobileSidebar()" title="Menu">☰</button>
+
           <div class="patient-quick-select" onclick="app.navigateTo('patients')">
             <span>👤 Active Patient:</span>
             <span id="active-patient-name">Sophia Martinez (P-1001)</span>
@@ -53,9 +76,50 @@
               <option value="BR-03">🏥 Downtown Smile Hub</option>
             </select>
           </div>
-        </div>
 
         <div class="header-right">
+          <!-- Global Search (Ctrl+K) -->
+          <button class="icon-btn" onclick="GlobalSearchModule.open()" title="Search (Ctrl+K)">
+            🔍
+          </button>
+
+          <!-- Notifications Bell -->
+          <button class="icon-btn" id="notif-bell-btn" onclick="NotificationModule.toggleDropdown()" title="Notifications">
+            🔔
+            <span class="badge-dot notif-badge" id="notif-badge-dot"></span>
+            <span class="notif-badge-count" id="notif-badge-count" style="
+              position:absolute;
+              top:-4px;
+              right:-4px;
+              background:var(--danger);
+              color:white;
+              width:18px;
+              height:18px;
+              border-radius:50%;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              font-size:0.6rem;
+              font-weight:800;
+              border:2px solid var(--bg-secondary);
+            ">0</span>
+          </button>
+
+          <!-- Notification Dropdown -->
+          <div id="notif-dropdown" class="notif-dropdown glass-panel" style="
+            display:none;
+            position:absolute;
+            top:56px;
+            right:160px;
+            width:380px;
+            max-height:450px;
+            overflow:hidden;
+            z-index:50;
+          "></div>
+
+          <!-- Notification Overlay -->
+          <div id="notif-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:45;" onclick="NotificationModule.closeDropdown()"></div>
+
           <select id="plan-select" class="form-control plan-select" onchange="app.togglePlan(this.value)" title="Switch Pro / Premium plan">
             <option value="pro">Pro Plan</option>
             <option value="premium" selected>Premium Plan</option>
@@ -76,13 +140,13 @@
       </header>
 
       <main class="content-area">
-        
-        <div id="patients-module" class="page-view active"></div>
+        <div id="patients-module" class="page-view"></div>
         <div id="appointments-module" class="page-view"></div>
         <div id="calendar-module" class="page-view"></div>
         <div id="treatment-plan-module" class="page-view"></div>
         <div id="billing-module" class="page-view"></div>
         <div id="insurance-module" class="page-view"></div>
+        <div id="inbox-module" class="page-view"></div>
 
         <div id="tooth-chart-module" class="page-view"></div>
         <div id="xray-module" class="page-view"></div>
@@ -94,11 +158,14 @@
         <div id="multi-clinic-module" class="page-view"></div>
         <div id="staff-module" class="page-view"></div>
         <div id="patient-portal-module" class="page-view"></div>
-
       </main>
-    </div>
-  </div>
 
+    </div>
+
+  <!-- Global Search Command Palette (Ctrl+K) -->
+  <div id="search-palette"></div>
+
+  <!-- Global Modal -->
   <div class="modal-overlay" id="global-modal">
     <div class="modal-card">
       <div class="modal-header">
@@ -106,15 +173,16 @@
         <button class="close-btn" onclick="app.closeModal()">✕</button>
       </div>
       <div id="modal-body"></div>
-    </div>
   </div>
 
+  <!-- Toast Container -->
   <div id="toast-container"></div>
 
+  <!-- Scripts -->
   <script src="js/seedData.js"></script>
   <script src="js/store.js"></script>
   <script src="js/planConfig.js"></script>
-  
+
   <script src="js/modules/patients.js"></script>
   <script src="js/modules/appointments.js"></script>
   <script src="js/modules/calendar.js"></script>
@@ -132,6 +200,11 @@
   <script src="js/modules/multiClinic.js"></script>
   <script src="js/modules/staff.js"></script>
   <script src="js/modules/patientPortal.js"></script>
+
+  <!-- New Enhancement Modules -->
+  <script src="js/modules/notifications.js"></script>
+  <script src="js/modules/globalSearch.js"></script>
+  <script src="js/modules/inbox.js"></script>
 
   <script src="js/app.js"></script>
 </body>

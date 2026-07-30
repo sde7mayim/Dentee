@@ -1,19 +1,34 @@
 /* ==========================================================================
    DENTEE - MAIN APPLICATION CONTROLLER & ROUTER
+   Enhanced with glassmorphism, responsive layout, notifications,
+   global search, favorites, recent patients, inbox, and animations
    ========================================================================== */
 
 const app = {
   currentView: "patients",
   currentPatientId: "P-1001",
   theme: "light",
+  mobileSidebarOpen: false,
 
   init() {
     this.loadTheme();
+    this.applyGlassmorphism();
     this.renderSidebar();
+    this.renderSidebarExtras();
     this.attachNavigation();
     this.applyPlanUI();
     this.updateActivePatientLabel();
     this.navigateTo(this.currentView);
+    
+    // Initialize new modules
+    if (typeof GlobalSearchModule !== "undefined") {
+      GlobalSearchModule.init();
+    }
+    if (typeof NotificationModule !== "undefined") {
+      NotificationModule.init();
+    }
+
+    this.showToast("✨ Dentee enhanced with glassmorphism, global search (Ctrl+K), notifications & more!");
   },
 
   loadTheme() {
@@ -27,6 +42,21 @@ const app = {
     document.documentElement.setAttribute("data-theme", this.theme);
     localStorage.setItem("DENTEE_THEME", this.theme);
     this.showToast(`Switched to ${this.theme.toUpperCase()} theme mode.`);
+  },
+
+  applyGlassmorphism() {
+    // Apply glass effect classes to main layout elements
+    const sidebar = document.querySelector(".sidebar");
+    if (sidebar) sidebar.classList.add("glass");
+    
+    const header = document.querySelector(".top-header");
+    if (header) header.classList.add("glass");
+    
+    const modalCard = document.querySelector(".modal-card");
+    if (modalCard) modalCard.classList.add("glass");
+    
+    const profileCard = document.querySelector(".doctor-profile-card");
+    if (profileCard) profileCard.classList.add("glass");
   },
 
   renderSidebar() {
@@ -46,6 +76,102 @@ const app = {
         </div>
       `).join("")}
     `).join("");
+  },
+
+  renderSidebarExtras() {
+    this.renderFavorites();
+    this.renderRecentPatients();
+  },
+
+  renderFavorites() {
+    const container = document.getElementById("favorites-list");
+    if (!container) return;
+
+    const favs = store.getFavorites();
+    if (favs.length === 0) {
+      container.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:0.25rem 0.5rem;">No favorites yet ⭐</div>';
+      return;
+    }
+
+    container.innerHTML = favs.map(f => `
+      <div class="fav-sidebar-item" style="
+        display:flex;
+        align-items:center;
+        gap:0.5rem;
+        padding:0.4rem 0.6rem;
+        border-radius:var(--radius-sm);
+        cursor:pointer;
+        font-size:0.8rem;
+        color:var(--text-secondary);
+        transition:all var(--transition-fast);
+      " onclick="app.setActivePatient('${f.patientId}'); app.navigateTo('patients')"
+      onmouseover="this.style.background='var(--bg-tertiary)'"
+      onmouseout="this.style.background='transparent'">
+        <span class="fav-star active">⭐</span>
+        <span style="font-weight:600;">${f.patientName}</span>
+      </div>
+    `).join("");
+  },
+
+  renderRecentPatients() {
+    const container = document.getElementById("recent-patients-list");
+    if (!container) return;
+
+    const recents = store.getRecentPatients();
+    if (recents.length === 0) {
+      container.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:0.25rem 0.5rem;">No recent patients</div>';
+      return;
+    }
+
+    container.innerHTML = recents.map(r => {
+      const patient = store.getPatientById(r.patientId);
+      if (!patient) return "";
+      return `
+        <div style="
+          display:flex;
+          align-items:center;
+          gap:0.5rem;
+          padding:0.4rem 0.6rem;
+          border-radius:var(--radius-sm);
+          cursor:pointer;
+          font-size:0.8rem;
+          color:var(--text-secondary);
+          transition:all var(--transition-fast);
+        " onclick="app.setActivePatient('${r.patientId}'); app.navigateTo('patients')"
+        onmouseover="this.style.background='var(--bg-tertiary)'"
+        onmouseout="this.style.background='transparent'">
+          <span style="font-size:0.7rem;">📌</span>
+          <span style="font-weight:600;">${patient.name}</span>
+          <span style="margin-left:auto; font-size:0.65rem; color:var(--text-muted);">${app.timeAgo(r.lastAccessed)}</span>
+        </div>
+      `;
+    }).join("");
+  },
+
+  timeAgo(timestamp) {
+    const diff = Date.now() - new Date(timestamp).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "now";
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(diff / 3600000);
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours/24)}d ago`;
+  },
+
+  toggleMobileSidebar() {
+    this.mobileSidebarOpen = !this.mobileSidebarOpen;
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    if (sidebar) sidebar.classList.toggle("open", this.mobileSidebarOpen);
+    if (overlay) overlay.classList.toggle("active", this.mobileSidebarOpen);
+  },
+
+  closeMobileSidebar() {
+    this.mobileSidebarOpen = false;
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    if (sidebar) sidebar.classList.remove("open");
+    if (overlay) overlay.classList.remove("active");
   },
 
   applyPlanUI() {
@@ -77,6 +203,7 @@ const app = {
   togglePlan(plan) {
     PlanConfig.setActivePlan(plan);
     this.renderSidebar();
+    this.renderSidebarExtras();
     this.applyPlanUI();
 
     if (!PlanConfig.canAccess(this.currentView)) {
@@ -102,6 +229,11 @@ const app = {
         return;
       }
       this.navigateTo(view);
+      
+      // Close mobile sidebar on navigation
+      if (window.innerWidth <= 768) {
+        this.closeMobileSidebar();
+      }
     });
   },
 
@@ -113,7 +245,12 @@ const app = {
 
     if (patientId) {
       this.currentPatientId = patientId;
+      store.trackRecentPatient(patientId);
       this.updateActivePatientLabel();
+      this.renderSidebarExtras();
+    } else {
+      store.trackRecentPatient(this.currentPatientId);
+      this.renderSidebarExtras();
     }
 
     this.currentView = viewName;
@@ -128,6 +265,11 @@ const app = {
       case "patients":
         document.getElementById("patients-module").classList.add("active");
         PatientsModule.render();
+        break;
+
+      case "inbox":
+        document.getElementById("inbox-module").classList.add("active");
+        InboxModule.render();
         break;
 
       case "tooth-chart":
@@ -215,14 +357,35 @@ const app = {
   setActivePatient(patientId) {
     this.currentPatientId = patientId;
     const patient = store.getPatientById(patientId);
+    
+    store.trackRecentPatient(patientId);
+    this.renderSidebarExtras();
+    
     this.updateActivePatientLabel();
     this.showToast(`Active patient set to ${patient ? patient.name : patientId}`);
+    
     if (this.currentView === "tooth-chart") {
       ToothChartModule.render(patientId);
     } else if (this.currentView === "treatment-plan") {
       TreatmentPlanModule.render(patientId);
     } else if (this.currentView === "patient-portal") {
       PatientPortalModule.render(patientId);
+    }
+    
+    if (typeof NotificationModule !== "undefined") {
+      NotificationModule.updateBadge();
+    }
+  },
+
+  toggleFavorite(patientId) {
+    store.toggleFavorite(patientId);
+    const isFav = store.isFavorite(patientId);
+    this.renderSidebarExtras();
+    this.showToast(isFav ? "⭐ Added to favorites" : "Removed from favorites");
+    
+    // Refresh patient cards if on patients view
+    if (this.currentView === "patients") {
+      PatientsModule.render();
     }
   },
 
@@ -262,13 +425,12 @@ const app = {
     if (!container) return;
 
     const toast = document.createElement("div");
-    toast.className = "toast";
+    toast.className = "toast glass";
     toast.innerHTML = `<span>🦷</span> ${message}`;
     container.appendChild(toast);
 
     setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transform = "translateX(100%)";
+      toast.classList.add("toast-removing");
       setTimeout(() => toast.remove(), 300);
     }, 3000);
   },

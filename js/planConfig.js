@@ -12,7 +12,8 @@ const PlanConfig = {
     "calendar",
     "treatment-plan",
     "billing",
-    "insurance"
+    "insurance",
+    "inbox"
   ],
 
   PREMIUM_FEATURES: [
@@ -29,6 +30,13 @@ const PlanConfig = {
   ],
 
   NAV_SECTIONS: [
+    {
+      label: "Quick Access",
+      tier: "pro",
+      items: [
+        { view: "inbox", icon: "📥", label: "Inbox" }
+      ]
+    },
     {
       label: "Pro Plan",
       tier: "pro",

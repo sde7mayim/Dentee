@@ -413,6 +413,189 @@ class DenteeStore {
       defaultGSTRate: clinic.defaultGSTRate || 18
     };
   }
+
+  /* --------------------------------------------------------------------------
+     16. NOTIFICATIONS API
+     -------------------------------------------------------------------------- */
+  getNotifications() {
+    return this.state.notifications || [];
+  }
+
+  addNotification(notifData) {
+    if (!this.state.notifications) this.state.notifications = [];
+    const newNotif = {
+      id: `NOTIF-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      read: false,
+      ...notifData
+    };
+    this.state.notifications.unshift(newNotif);
+    this.saveState();
+    return newNotif;
+  }
+
+  markNotificationRead(notifId) {
+    const notif = (this.state.notifications || []).find(n => n.id === notifId);
+    if (notif) {
+      notif.read = true;
+      this.saveState();
+    }
+  }
+
+  markAllNotificationsRead() {
+    (this.state.notifications || []).forEach(n => { n.read = true; });
+    this.saveState();
+  }
+
+  getUnreadNotificationCount() {
+    return (this.state.notifications || []).filter(n => !n.read).length;
+  }
+
+  clearNotification(notifId) {
+    this.state.notifications = (this.state.notifications || []).filter(n => n.id !== notifId);
+    this.saveState();
+  }
+
+  /* --------------------------------------------------------------------------
+     17. FAVORITES API
+     -------------------------------------------------------------------------- */
+  getFavorites() {
+    return this.state.favorites || [];
+  }
+
+  isFavorite(patientId) {
+    return (this.state.favorites || []).some(f => f.patientId === patientId);
+  }
+
+  toggleFavorite(patientId) {
+    if (!this.state.favorites) this.state.favorites = [];
+    const idx = this.state.favorites.findIndex(f => f.patientId === patientId);
+    if (idx >= 0) {
+      this.state.favorites.splice(idx, 1);
+    } else {
+      const patient = this.getPatientById(patientId);
+      this.state.favorites.push({
+        patientId,
+        patientName: patient ? patient.name : "Unknown",
+        addedAt: new Date().toISOString()
+      });
+    }
+    this.saveState();
+  }
+
+  /* --------------------------------------------------------------------------
+     18. RECENT PATIENTS API
+     -------------------------------------------------------------------------- */
+  getRecentPatients() {
+    return this.state.recentPatients || [];
+  }
+
+  trackRecentPatient(patientId) {
+    if (!this.state.recentPatients) this.state.recentPatients = [];
+    const idx = this.state.recentPatients.findIndex(r => r.patientId === patientId);
+    if (idx >= 0) {
+      this.state.recentPatients.splice(idx, 1);
+    }
+    this.state.recentPatients.unshift({
+      patientId,
+      lastAccessed: new Date().toISOString()
+    });
+    // Keep max 10 recent patients
+    if (this.state.recentPatients.length > 10) {
+      this.state.recentPatients = this.state.recentPatients.slice(0, 10);
+    }
+    this.saveState();
+  }
+
+  /* --------------------------------------------------------------------------
+     19. INBOX MESSAGES API
+     -------------------------------------------------------------------------- */
+  getInboxMessages() {
+    return this.state.inboxMessages || [];
+  }
+
+  addInboxMessage(msgData) {
+    if (!this.state.inboxMessages) this.state.inboxMessages = [];
+    const newMsg = {
+      id: `INBOX-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      read: false,
+      ...msgData
+    };
+    this.state.inboxMessages.unshift(newMsg);
+    this.saveState();
+    return newMsg;
+  }
+
+  markInboxRead(msgId) {
+    const msg = (this.state.inboxMessages || []).find(m => m.id === msgId);
+    if (msg) {
+      msg.read = true;
+      this.saveState();
+    }
+  }
+
+  markAllInboxRead() {
+    (this.state.inboxMessages || []).forEach(m => { m.read = true; });
+    this.saveState();
+  }
+
+  getUnreadInboxCount() {
+    return (this.state.inboxMessages || []).filter(m => !m.read).length;
+  }
+
+  /* --------------------------------------------------------------------------
+     20. GLOBAL SEARCH INDEX API
+     -------------------------------------------------------------------------- */
+  buildSearchIndex() {
+    const index = [];
+    
+    // Index patients
+    this.getPatients().forEach(p => {
+      index.push({
+        type: 'patient',
+        id: p.id,
+        label: p.name,
+        subtitle: `${p.id} • ${p.phone}`,
+        icon: '👤'
+      });
+    });
+
+    // Index appointments
+    this.getAppointments().forEach(a => {
+      index.push({
+        type: 'appointment',
+        id: a.id,
+        label: `${a.patientName} - ${a.procedure}`,
+        subtitle: `${a.date} at ${a.time} • ${a.status}`,
+        icon: '📅'
+      });
+    });
+
+    // Index invoices
+    this.getInvoices().forEach(i => {
+      index.push({
+        type: 'invoice',
+        id: i.id,
+        label: `Invoice ${i.id}`,
+        subtitle: `${i.patientName} • $${i.total.toFixed(2)} • ${i.status}`,
+        icon: '💵'
+      });
+    });
+
+    // Index procedures
+    this.getProcedures().forEach(p => {
+      index.push({
+        type: 'procedure',
+        id: p.code,
+        label: `${p.code} - ${p.name}`,
+        subtitle: `$${p.cost.toFixed(2)} • ${p.duration} min`,
+        icon: '🦷'
+      });
+    });
+
+    return index;
+  }
 }
 
 // Global Store Instance

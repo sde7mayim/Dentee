@@ -12,12 +12,12 @@
   --bg-tertiary: #f1f5f9;
   --bg-card: #ffffff;
   --bg-hover: #e2e8f0;
-  
+
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
   --text-inverse: #ffffff;
-  
+
   --border-color: #e2e8f0;
   --border-focus: #028090;
 
@@ -28,7 +28,7 @@
   --accent: #00a896;
   --accent-light: #e0f2f1;
   --secondary: #3a86ff;
-  
+
   /* Status Colors */
   --success: #10b981;
   --success-bg: #d1fae5;
@@ -38,7 +38,7 @@
   --danger-bg: #fee2e2;
   --info: #0284c7;
   --info-bg: #e0f2fe;
-  
+
   /* Dental Status Colors */
   --tooth-sound: #10b981;
   --tooth-caries: #ef4444;
@@ -54,18 +54,18 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
-  
+
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s ease;
   --transition-slow: 0.4s ease;
 
-  --sidebar-width: 260px;
+  --sidebar-width: 280px;
   --header-height: 70px;
 }
 
@@ -75,17 +75,17 @@
   --bg-tertiary: #19274d;
   --bg-card: #142247;
   --bg-hover: #1e305e;
-  
+
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #64748b;
-  
+
   --border-color: #1e293b;
   --border-focus: #00a896;
-  
+
   --primary-light: rgba(2, 128, 144, 0.2);
   --accent-light: rgba(0, 168, 150, 0.2);
-  
+
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
@@ -115,7 +115,10 @@ a {
   text-decoration: none;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
   font-size: 0.95rem;
   outline: none;
@@ -127,7 +130,7 @@ button {
   background: none;
 }
 
-/* Layout Structure */
+/* ===== LAYOUT STRUCTURE ===== */
 #app-layout {
   display: flex;
   width: 100vw;
@@ -135,31 +138,38 @@ button {
   overflow: hidden;
 }
 
-/* Sidebar Navigation */
+/* ===== SIDEBAR NAVIGATION ===== */
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: var(--sidebar-width);
+  height: 100vh;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  height: 100%;
+  overflow: hidden;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, .05);
   flex-shrink: 0;
-  z-index: 20;
-  transition: all var(--transition-normal);
 }
 
 .sidebar-header {
-  height: var(--header-height);
-  padding: 0 1.5rem;
+  height: 72px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 12px;
   border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .brand-logo {
   width: 40px;
   height: 40px;
+  min-width: 40px;
   background: linear-gradient(135deg, var(--primary), var(--accent));
   border-radius: var(--radius-md);
   display: flex;
@@ -178,6 +188,7 @@ button {
   background: linear-gradient(135deg, var(--primary), var(--accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
 .brand-tag {
@@ -189,6 +200,7 @@ button {
   font-weight: 700;
   margin-left: auto;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .brand-tag-premium {
@@ -198,12 +210,12 @@ button {
 
 .nav-item-locked {
   opacity: 0.45;
-  cursor: not-allowed;
+  cursor: not-allowed !important;
 }
 
 .nav-item-locked:hover {
-  background: transparent;
-  color: var(--text-secondary);
+  background: transparent !important;
+  color: var(--text-secondary) !important;
 }
 
 .nav-lock-badge {
@@ -215,6 +227,9 @@ button {
 
 .nav-label {
   flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .plan-select {
@@ -228,12 +243,13 @@ button {
 }
 
 .sidebar-menu {
-  padding: 1rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   flex: 1;
   overflow-y: auto;
   display: flex;
-  flex-direction: flex-col;
-  gap: 0.25rem;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-height: 0;
 }
 
 .sidebar-menu::-webkit-scrollbar {
@@ -251,21 +267,23 @@ button {
   text-transform: uppercase;
   color: var(--text-muted);
   letter-spacing: 0.5px;
-  margin: 1rem 0.75rem 0.35rem 0.75rem;
+  padding: 0.75rem 0.75rem 0.35rem 0.75rem;
+  flex-shrink: 0;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.75rem 1rem;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   transition: all var(--transition-fast);
   cursor: pointer;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .nav-item:hover {
@@ -280,12 +298,13 @@ button {
 }
 
 .nav-item .icon {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   width: 24px;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .nav-badge {
@@ -299,8 +318,9 @@ button {
 }
 
 .sidebar-footer {
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .doctor-profile-card {
@@ -315,6 +335,7 @@ button {
 .doctor-avatar {
   width: 38px;
   height: 38px;
+  min-width: 38px;
   border-radius: var(--radius-full);
   background: var(--primary);
   color: white;
@@ -326,26 +347,35 @@ button {
 
 .doctor-info {
   line-height: 1.2;
+  min-width: 0;
 }
 
 .doctor-name {
   font-size: 0.85rem;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .doctor-role {
   font-size: 0.72rem;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Main Content Area */
+/* ===== MAIN CONTENT ===== */
 .main-wrapper {
+  margin-left: var(--sidebar-width);
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
   background: var(--bg-primary);
+  width: calc(100vw - var(--sidebar-width));
 }
 
 /* Header Navbar */
@@ -357,14 +387,23 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .search-box {
@@ -398,15 +437,10 @@ button {
   font-size: 0.9rem;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
 .icon-btn {
   width: 40px;
   height: 40px;
+  min-width: 40px;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
@@ -445,6 +479,7 @@ button {
   font-size: 0.85rem;
   cursor: pointer;
   border: 1px solid rgba(2, 128, 144, 0.2);
+  white-space: nowrap;
 }
 
 /* Page Containers */
@@ -465,8 +500,14 @@ button {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Page Header Standard */
@@ -571,6 +612,7 @@ button {
 .stat-icon {
   width: 48px;
   height: 48px;
+  min-width: 48px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -578,11 +620,30 @@ button {
   font-size: 1.4rem;
 }
 
-.stat-icon.teal { background: var(--primary-light); color: var(--primary); }
-.stat-icon.emerald { background: var(--accent-light); color: var(--accent); }
-.stat-icon.blue { background: var(--info-bg); color: var(--info); }
-.stat-icon.amber { background: var(--warning-bg); color: var(--warning); }
-.stat-icon.purple { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+.stat-icon.teal {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.stat-icon.emerald {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.stat-icon.blue {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.stat-icon.amber {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.stat-icon.purple {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+}
 
 .stat-val {
   font-size: 1.4rem;
@@ -646,8 +707,13 @@ button {
   border-bottom: 1px solid var(--border-color);
 }
 
-.data-table th:first-child { border-top-left-radius: var(--radius-sm); }
-.data-table th:last-child { border-top-right-radius: var(--radius-sm); }
+.data-table th:first-child {
+  border-top-left-radius: var(--radius-sm);
+}
+
+.data-table th:last-child {
+  border-top-right-radius: var(--radius-sm);
+}
 
 .data-table td {
   padding: 0.95rem 1rem;
@@ -677,14 +743,34 @@ button {
   text-transform: capitalize;
 }
 
-.badge-success { background: var(--success-bg); color: var(--success); }
-.badge-warning { background: var(--warning-bg); color: var(--warning); }
-.badge-danger { background: var(--danger-bg); color: var(--danger); }
-.badge-info { background: var(--info-bg); color: var(--info); }
-.badge-secondary { background: var(--bg-tertiary); color: var(--text-secondary); }
+.badge-success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge-info {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.badge-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
 
 /* ==========================================================================
    INTERACTIVE TOOTH CHART STYLES (Adult 32 / Pediatric 20)
+   3D Enhanced — CSS Perspective Arch & SVG Gradients
    ========================================================================== */
 .tooth-chart-container {
   background: var(--bg-card);
@@ -727,79 +813,177 @@ button {
   border-radius: 3px;
 }
 
-.tooth-grid-arch {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  margin-bottom: 1.5rem;
-  padding: 0.5rem;
-  overflow-x: auto;
+/* ===== 2D NORMAL DENTAL CHART STYLES ===== */
+.tooth-chart-2d-container {
+  position: relative;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem 1.25rem;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-sm);
 }
 
+[data-theme="dark"] .tooth-chart-2d-container {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.tooth-arch-2d {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0.75rem 0.25rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Normal 2D Tooth Card */
 .tooth-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 52px;
-  padding: 6px 4px;
+  width: 62px;
+  min-width: 58px;
+  padding: 8px 4px;
   background: var(--bg-secondary);
   border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
   user-select: none;
-  position: relative;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.tooth-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+[data-theme="dark"] .tooth-card::after {
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
 }
 
 .tooth-card:hover {
-  border-color: var(--primary);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
+  border-color: var(--primary) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-md) !important;
+  z-index: 10;
+}
+
+.tooth-card:hover::after {
+  opacity: 1;
 }
 
 .tooth-card.selected {
-  border-color: var(--primary);
-  background: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(2, 128, 144, 0.3);
+  border-color: var(--primary) !important;
+  background: var(--primary-light) !important;
+  box-shadow: 0 0 0 3px rgba(2, 128, 144, 0.35) !important;
+  z-index: 15;
 }
 
 .tooth-number {
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 800;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 1;
 }
 
-/* SVG Anatomical Tooth Representation */
+/* SVG Anatomical Tooth Representation — 3D Enhanced */
 .tooth-svg-wrap {
-  width: 38px;
-  height: 48px;
+  width: 40px;
+  height: 50px;
   position: relative;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
 }
 
 .tooth-svg {
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 
+/* Base tooth surface style with 3D bevel */
 .tooth-surface {
-  fill: #f8fafc;
-  stroke: #475569;
-  stroke-width: 1.2;
-  transition: fill var(--transition-fast);
+  stroke: #334155;
+  stroke-width: 1;
+  stroke-linejoin: round;
+  transition: fill 0.25s ease;
   cursor: pointer;
 }
 
 [data-theme="dark"] .tooth-surface {
-  fill: #1e293b;
-  stroke: #64748b;
+  stroke: #475569;
 }
 
 .tooth-surface:hover {
-  fill: #cbd5e1 !important;
+  filter: brightness(1.15) saturate(1.2);
 }
 
-/* Surface status colors */
+/* Tooth Shine/Highlight overlay */
+.tooth-shine {
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+}
+
+[data-theme="dark"] .tooth-shine {
+  opacity: 0.15;
+  mix-blend-mode: screen;
+}
+
+/* Tooth Shadow overlay for depth */
+.tooth-shadow-overlay {
+  pointer-events: none;
+  opacity: 0.12;
+}
+
+[data-theme="dark"] .tooth-shadow-overlay {
+  opacity: 0.25;
+}
+
+/* Tooth Root 3D style */
+.tooth-root {
+  fill: none;
+  stroke: #475569;
+  stroke-width: 1.5;
+  opacity: 0.5;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+}
+
+[data-theme="dark"] .tooth-root {
+  stroke: #334155;
+  opacity: 0.4;
+}
+
+.tooth-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.08);
+  position: relative;
+  z-index: 1;
+  max-width: 48px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Surface Condition Classes — used as fallback for non-gradient rendering */
 .surface-caries { fill: var(--tooth-caries) !important; }
 .surface-filling { fill: var(--tooth-filling) !important; }
 .surface-crown { fill: var(--tooth-crown) !important; }
@@ -807,15 +991,6 @@ button {
 .surface-extracted { fill: var(--tooth-extracted) !important; opacity: 0.4; }
 .surface-implant { fill: var(--tooth-implant) !important; }
 
-.tooth-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  margin-top: 4px;
-  text-align: center;
-}
-
-/* Tooth Inspector Drawer / Modal */
 .tooth-detail-panel {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -823,6 +998,48 @@ button {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border-color);
+  position: relative;
+  z-index: 1;
+}
+
+/* 3D Arch Labels (Midline indicator) */
+.arch-midline-indicator {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: var(--text-muted);
+  border-radius: 1px;
+  opacity: 0.4;
+}
+
+/* Responsive 3D adjustments */
+@media (max-width: 768px) {
+  .tooth-chart-3d-container {
+    perspective: 800px;
+  }
+  .tooth-card {
+    width: 40px;
+    min-width: 32px;
+    padding: 4px 2px;
+  }
+  .tooth-svg-wrap {
+    width: 30px;
+    height: 38px;
+  }
+  .tooth-number {
+    font-size: 0.55rem;
+  }
+  .tooth-label {
+    font-size: 0.5rem;
+  }
+  .tooth-arch-3d {
+    gap: 1px;
+    padding: 1.5rem 0.25rem 1rem 0.25rem;
+    min-height: 100px;
+  }
 }
 
 /* ==========================================================================
@@ -988,119 +1205,74 @@ button {
 .modal-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border-color);
-}
+  justify-content: spaceI see the issues now. The CSS has several problems:
+1. `.sidebar-menu` has invalid `flex-direction: flex-col` (should be `column`)
+2. `.main-wrapper` lacks `margin-left: 280px` to offset the fixed sidebar
+3. Sidebar sections need proper flex-shrink
 
-.modal-title {
-  font-size: 1.2rem;
-  font-weight: 800;
-}
+Let me fix all these at once:
 
-.close-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+<edit_file>
+<path>
+c:/Dentee/css/styles.css
+</path>
+<old_str>#app-layout {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-tertiary);
-  color: var(--text-muted);
-  font-size: 1.1rem;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.close-btn:hover {
-  background: var(--danger-bg);
-  color: var(--danger);
-}
 
-/* Form Controls */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.form-group.full-width {
-  grid-column: span 2;
-}
-
-.form-group label {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.65rem 0.85rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  transition: border-color var(--transition-fast);
-}
-
-.form-control:focus {
-  border-color: var(--border-focus);
-  background: var(--bg-secondary);
-  box-shadow: 0 0 0 3px var(--primary-light);
-}
-
-/* Toast Notifications */
-#toast-container {
+.sidebar {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  z-index: 200;
-}
-
-.toast {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: 0.85rem 1.25rem;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  border-left: 4px solid var(--primary);
+  overflow: hidden;
+  transition: .3s;
+  z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, .05);
+}</old_str>
+<new_str>#app-layout {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.88rem;
-  font-weight: 600;
-  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+/* Sidebar - Fixed left panel */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, .05);
+  flex-shrink: 0;
 }
 
-/* Print Stylesheet for Invoices & Prescriptions */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  .printable-area, .printable-area * {
-    visibility: visible;
-  }
-  .printable-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
-  .sidebar, .top-header, .btn, .icon-btn {
-    display: none !important;
-  }
-}
+/* Main content offset for fixed sidebar */
+.main-wrapper {
+  margin-left: 280px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-primary);
+  width: calc(100vw - 280px);
+}</new_str>
+</edit_file>

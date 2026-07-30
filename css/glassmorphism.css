@@ -1,0 +1,192 @@
+/* ==========================================================================
+   DENTEE - GLASSMORPHISM & FROSTED GLASS EFFECTS
+   Modern glass UI with backdrop-filter blur, transparency, and depth
+   ========================================================================== */
+
+/* Glass Sidebar */
+.sidebar.glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .sidebar.glass {
+  background: rgba(15, 23, 42, 0.8);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Glass Cards */
+.card.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .card.glass {
+  background: rgba(20, 34, 71, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Glass Stat Cards */
+.stat-card.glass {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .stat-card.glass {
+  background: rgba(20, 34, 71, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Glass Modal */
+.modal-card.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .modal-card.glass {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Glass Header */
+.top-header.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .top-header.glass {
+  background: rgba(17, 28, 58, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Glass Dropdown / Panel */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .glass-panel {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Gradient Glass Hero */
+.glass-hero {
+  background: linear-gradient(135deg, rgba(2, 128, 144, 0.15), rgba(0, 168, 150, 0.1));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(2, 128, 144, 0.2);
+  border-radius: var(--radius-lg);
+}
+
+/* Glass Divider */
+.glass-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(2, 128, 144, 0.3), transparent);
+  margin: 1.5rem 0;
+}
+
+/* Notification Dropdown Glass */
+.notif-dropdown.glass-panel {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .notif-dropdown.glass-panel {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+/* Glass Search Bar (Global Search Command Palette) */
+.search-palette.glass-panel {
+  max-height: 480px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="dark"] .search-palette.glass-panel {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Frosted Glass Input */
+input.glass,
+select.glass,
+textarea.glass {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] input.glass,
+[data-theme="dark"] select.glass,
+[data-theme="dark"] textarea.glass {
+  background: rgba(20, 34, 71, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Glassmorphism layer backgrounds */
+.glass-bg-layer {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-bg-layer::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(2, 128, 144, 0.05) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(0, 168, 150, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glass-bg-layer > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Toast Glass */
+.toast.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .toast.glass {
+  background: rgba(20, 34, 71, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Profile Card Glass */
+.doctor-profile-card.glass {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .doctor-profile-card.glass {
+  background: rgba(20, 34, 71, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+

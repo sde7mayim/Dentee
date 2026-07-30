@@ -382,6 +382,35 @@ const INITIAL_SEED_DATA = {
     { id: "CF-05", title: "Dental Implant Surgical Informed Consent", category: "Implantology", lastUpdated: "2026-05-01", requiresSignature: true }
   ],
 
+  notifications: [
+    { id: "NOTIF-1001", type: "appointment", title: "Appointment Reminder", message: "Sophia Martinez has an appointment in 30 minutes with Dr. Jenkins (Chair 1).", timestamp: new Date(Date.now() - 1000*60*5).toISOString(), read: false, icon: "📅" },
+    { id: "NOTIF-1002", type: "billing", title: "Payment Received", message: "Payment of $265.50 received from Marcus Vance (Invoice INV-2026-002).", timestamp: new Date(Date.now() - 1000*60*30).toISOString(), read: false, icon: "💵" },
+    { id: "NOTIF-1003", type: "recall", title: "Recall Due", message: "Emily Watson's 6-month hygiene recall is due in 7 days.", timestamp: new Date(Date.now() - 1000*60*60*2).toISOString(), read: false, icon: "🔄" },
+    { id: "NOTIF-1004", type: "inventory", title: "Low Stock Alert", message: "Dental Anesthetic Articaine 4% stock is low (8 boxes). Reorder level: 15.", timestamp: new Date(Date.now() - 1000*60*60*4).toISOString(), read: true, icon: "📦" },
+    { id: "NOTIF-1005", type: "system", title: "Insurance Claim Update", message: "Claim CLM-002 for Marcus Vance has been approved by MetLife.", timestamp: new Date(Date.now() - 1000*60*60*24).toISOString(), read: true, icon: "🛡️" },
+    { id: "NOTIF-1006", type: "appointment", title: "New Booking", message: "Alexander Wright booked an implant placement for July 28 at 10:00 AM.", timestamp: new Date(Date.now() - 1000*60*60*48).toISOString(), read: true, icon: "📅" }
+  ],
+
+  favorites: [
+    { patientId: "P-1001", patientName: "Sophia Martinez", addedAt: "2026-07-20T10:00:00.000Z" },
+    { patientId: "P-1003", patientName: "Emily Watson", addedAt: "2026-07-15T14:30:00.000Z" }
+  ],
+
+  recentPatients: [
+    { patientId: "P-1002", lastAccessed: new Date(Date.now() - 1000*60*15).toISOString() },
+    { patientId: "P-1001", lastAccessed: new Date(Date.now() - 1000*60*60).toISOString() },
+    { patientId: "P-1004", lastAccessed: new Date(Date.now() - 1000*60*120).toISOString() },
+    { patientId: "P-1003", lastAccessed: new Date(Date.now() - 1000*60*180).toISOString() }
+  ],
+
+  inboxMessages: [
+    { id: "INBOX-1001", from: "Dr. Sarah Jenkins", subject: "Treatment Plan Approval Needed", message: "The treatment plan for Alexander Wright (TP-702) is pending your approval. Please review the cost estimate of $3,467.50.", timestamp: new Date(Date.now() - 1000*60*10).toISOString(), read: false, priority: "high", category: "clinical" },
+    { id: "INBOX-1002", from: "Rachel Adams (Front Desk)", subject: "New Patient Walk-in", message: "A new walk-in patient, Mr. Thomas Hart (age 45), is requesting an emergency consultation for toothache. Please schedule.", timestamp: new Date(Date.now() - 1000*60*45).toISOString(), read: false, priority: "medium", category: "administrative" },
+    { id: "INBOX-1003", from: "Inventory System", subject: "Supply Reorder Required", message: "3 items are below reorder level: Dental Anesthetic (8 boxes), Diamond Burs (3 packs). Please place order.", timestamp: new Date(Date.now() - 1000*60*60*3).toISOString(), read: true, priority: "low", category: "inventory" },
+    { id: "INBOX-1004", from: "Delta Dental Insurance", subject: "Claim CLM-001 Status Update", message: "Claim for Sophia Martinez (Composite Filling + X-Ray) is under review. Estimated processing time: 7-10 business days.", timestamp: new Date(Date.now() - 1000*60*60*12).toISOString(), read: true, priority: "medium", category: "insurance" },
+    { id: "INBOX-1005", from: "System Notification", subject: "Backup Completed", message: "Daily data backup completed successfully. Last backup: July 27, 2026 02:00 AM.", timestamp: new Date(Date.now() - 1000*60*60*24).toISOString(), read: true, priority: "low", category: "system" }
+  ],
+
   recalls: [
     { id: "REC-101", patientId: "P-1001", patientName: "Sophia Martinez", type: "6-Month Dental Checkup & Hygiene", dueDate: "2026-08-20", channel: "WhatsApp", status: "Scheduled", phone: "+1 (555) 234-5678" },
     { id: "REC-102", patientId: "P-1002", patientName: "Marcus Vance", type: "Root Canal Follow-Up & Crown Review", dueDate: "2026-08-05", channel: "SMS", status: "Pending Dispatch", phone: "+1 (555) 876-5432" },

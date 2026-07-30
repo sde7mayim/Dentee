@@ -1,0 +1,308 @@
+/* ==========================================================================
+   DENTEE - SMOOTH ANIMATIONS & TRANSITIONS
+   Page transitions, micro-interactions, staggered lists, loading states
+   ========================================================================== */
+
+/* Base Transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: var(--transition-fast);
+}
+
+/* ==================== PAGE VIEW TRANSITIONS ==================== */
+.page-view {
+  animation: fadeSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-view.active {
+  animation: fadeSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==================== STAGGERED LIST ANIMATIONS ==================== */
+.stagger-list > * {
+  opacity: 0;
+  animation: staggerFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger-list > *:nth-child(1) { animation-delay: 0.02s; }
+.stagger-list > *:nth-child(2) { animation-delay: 0.06s; }
+.stagger-list > *:nth-child(3) { animation-delay: 0.10s; }
+.stagger-list > *:nth-child(4) { animation-delay: 0.14s; }
+.stagger-list > *:nth-child(5) { animation-delay: 0.18s; }
+.stagger-list > *:nth-child(6) { animation-delay: 0.22s; }
+.stagger-list > *:nth-child(7) { animation-delay: 0.26s; }
+.stagger-list > *:nth-child(8) { animation-delay: 0.30s; }
+.stagger-list > *:nth-child(9) { animation-delay: 0.34s; }
+.stagger-list > *:nth-child(10) { animation-delay: 0.38s; }
+.stagger-list > *:nth-child(11) { animation-delay: 0.42s; }
+.stagger-list > *:nth-child(12) { animation-delay: 0.46s; }
+.stagger-list > *:nth-child(n+13) { animation-delay: 0.50s; }
+
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==================== CARD HOVER MICRO-INTERACTIONS ==================== */
+.stat-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .stat-card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* Button Press Animation */
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* ==================== NAV ITEM MICRO-INTERACTIONS ==================== */
+.nav-item {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-item:hover {
+  transform: translateX(3px);
+}
+
+.nav-item.active {
+  transform: translateX(0);
+}
+
+/* ==================== SKELETON LOADING ==================== */
+.skeleton {
+  background: linear-gradient(90deg, 
+    var(--bg-tertiary) 25%, 
+    var(--bg-hover) 50%, 
+    var(--bg-tertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-line {
+  height: 14px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.skeleton-line:last-child {
+  width: 60%;
+}
+
+.skeleton-card {
+  height: 180px;
+  border-radius: var(--radius-lg);
+}
+
+/* ==================== TOAST ANIMATIONS ==================== */
+.toast {
+  animation: toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(120%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.toast-removing {
+  animation: toastSlideOut 0.3s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes toastSlideOut {
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* ==================== NOTIFICATION BADGE BOUNCE ==================== */
+.notif-badge {
+  animation: notifPulse 2s ease-in-out infinite;
+}
+
+@keyframes notifPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* ==================== MODAL ANIMATIONS ==================== */
+.modal-overlay {
+  transition: opacity 0.25s ease;
+}
+
+.modal-card {
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.active .modal-card {
+  transform: translateY(0) scale(1);
+}
+
+/* ==================== SEARCH PALETTE ANIMATION ==================== */
+.search-palette-overlay {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.search-palette-overlay.active {
+  opacity: 1;
+}
+
+.search-palette {
+  transform: translateY(-20px) scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.search-palette-overlay.active .search-palette {
+  transform: translateY(0) scale(1);
+}
+
+/* ==================== NOTIFICATION DROPDOWN ANIMATION ==================== */
+.notif-dropdown {
+  transform-origin: top right;
+  animation: dropdownScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownScaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==================== SPINNER / LOADER ==================== */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid var(--border-color);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==================== FAVORITE STAR ANIMATION ==================== */
+.fav-star {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.2s ease;
+}
+
+.fav-star:hover {
+  transform: scale(1.3);
+}
+
+.fav-star.active {
+  animation: starPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes starPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+
+/* ==================== COUNT UP ANIMATION ==================== */
+.count-up {
+  animation: countFadeIn 0.6s ease;
+}
+
+@keyframes countFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== PROGRESS BAR ANIMATION ==================== */
+.progress-fill {
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==================== PAGE TRANSITION WRAPPER ==================== */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* ==================== TOGGLE SWITCH ANIMATION ==================== */
+.toggle-switch {
+  transition: background 0.2s ease;
+}
+
+.toggle-switch .toggle-knob {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.toggle-switch.active .toggle-knob {
+  transform: translateX(20px);
+}
+
