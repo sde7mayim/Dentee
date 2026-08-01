@@ -3,18 +3,20 @@
    Modern glass UI with backdrop-filter blur, transparency, and depth
    ========================================================================== */
 
-/* Glass Sidebar */
+/* Glass Sidebar (VetCastle Dark Pine) */
 .sidebar.glass {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(9, 34, 29, 0.96) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.06);
+  border-right: 1px solid rgba(20, 53, 46, 0.9) !important;
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.25);
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .sidebar.glass {
-  background: rgba(15, 23, 42, 0.8);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 34, 29, 0.96) !important;
+  border-right: 1px solid rgba(20, 53, 46, 0.9) !important;
+  color: #ffffff !important;
 }
 
 /* Glass Cards */
@@ -87,13 +89,15 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Gradient Glass Hero */
+/* VetCastle Signature Hero Banner */
 .glass-hero {
-  background: linear-gradient(135deg, rgba(2, 128, 144, 0.15), rgba(0, 168, 150, 0.1));
+  background: linear-gradient(135deg, #0c3b32 0%, #1c5344 55%, #2e6b57 100%);
+  color: #ffffff;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(2, 128, 144, 0.2);
-  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 12px 32px rgba(9, 34, 29, 0.25);
 }
 
 /* Glass Divider */

@@ -13,6 +13,73 @@
 </head>
 <body>
 
+  <!-- Full-Page VetCastle Executive Login Portal Screen -->
+  <div id="login-page-screen" class="login-screen-wrapper">
+    <div class="login-card glass-panel" style="
+      width: 100%;
+      max-width: 440px;
+      padding: 2.25rem;
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 24px 60px rgba(9, 34, 29, 0.25);
+    ">
+      <!-- VetCastle Brand Header -->
+      <div style="text-align:center; margin-bottom:1.75rem;">
+        <div style="
+          width: 56px;
+          height: 56px;
+          background: #c0eb38;
+          color: #09221d;
+          border-radius: var(--radius-lg);
+          font-size: 1.8rem;
+          font-weight: 900;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 0.75rem auto;
+          box-shadow: 0 6px 18px rgba(192, 235, 56, 0.35);
+        ">🦷</div>
+        <h1 style="font-size:1.6rem; font-weight:900; color:#09221d; margin-bottom:0.15rem; letter-spacing:-0.5px;">Dentee EHR OS</h1>
+        <div style="font-size:0.8rem; color:#6c7c77; font-weight:700;">VetCastle Hospital & Clinical Workflow Hub</div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" onsubmit="AuthModule.handleLoginFormSubmit(event)">
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label style="font-size:0.82rem; font-weight:800; color:#09221d;">Email Address *</label>
+          <input type="email" id="login-email" class="form-control" required placeholder="e.g. doctor@dentee.com" value="doctor@dentee.com">
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-size:0.82rem; font-weight:800; color:#09221d;">Password *</label>
+            <span style="font-size:0.75rem; color:#0d332b; font-weight:700; cursor:pointer;" onclick="app.showToast('Please enter your role password (e.g. doc@123 for Doctor)')">Help?</span>
+          </div>
+          <input type="password" id="login-password" class="form-control" required placeholder="••••••••" value="doc@123">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:0.85rem; font-size:0.95rem; font-weight:800; margin-bottom:1.25rem;">
+          🔑 Sign In to Practice OS
+        </button>
+      </form>
+
+      <!-- Role Credential Reference Guide -->
+      <details style="background:#f7f6f0; padding:0.75rem 1rem; border-radius:var(--radius-md); border:1px solid #e5e3d7; font-size:0.78rem; color:#3a4a45;">
+        <summary style="font-weight:800; cursor:pointer; color:#0d332b; display:flex; align-items:center; gap:0.4rem;">
+          <span>📋 System Role Credentials Reference</span>
+        </summary>
+        <div style="margin-top:0.6rem; display:flex; flex-direction:column; gap:0.35rem; font-size:0.75rem; line-height:1.4;">
+          <div>🛡️ <strong>Admin:</strong> admin@dentee.com / <code>admin@123</code></div>
+          <div>👨‍⚕️ <strong>Doctor:</strong> doctor@dentee.com / <code>doc@123</code></div>
+          <div>📋 <strong>Receptionist:</strong> receptionist@dentee.com / <code>rec@123</code></div>
+          <div>🔬 <strong>Lab Tech:</strong> lab@dentee.com / <code>lab@123</code></div>
+          <div>👤 <strong>Patient:</strong> patient@dentee.com / <code>patient@123</code></div>
+        </div>
+      </details>
+    </div>
+  </div>
+
   <div id="app-layout">
     
     <!-- Mobile Sidebar Overlay -->
@@ -29,21 +96,24 @@
         <div class="brand-tag brand-tag-premium" id="brand-tag">PREMIUM</div>
       </div>
 
-      <!-- Favorites Section -->
-      <div id="sidebar-favorites" style="padding:0.5rem 0.75rem; border-bottom:1px solid var(--border-color); flex-shrink:0;">
-        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px; margin-bottom:0.35rem;">⭐ Favorites</div>
-        <div id="favorites-list" style="display:flex; flex-direction:column; gap:2px;"></div>
-      </div>
+      <!-- Scrollable Inner Sidebar Container -->
+      <div class="sidebar-scroll-content">
+        <!-- Favorites Section -->
+        <div id="sidebar-favorites" style="padding:0.5rem 0.75rem; border-bottom:1px solid #14352e; flex-shrink:0;">
+          <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; color:#a3b8b0; letter-spacing:0.5px; margin-bottom:0.35rem;">⭐ Favorites</div>
+          <div id="favorites-list" style="display:flex; flex-direction:column; gap:2px;"></div>
+        </div>
 
-      <!-- Recent Patients Section -->
-      <div id="sidebar-recent" style="padding:0.5rem 0.75rem; border-bottom:1px solid var(--border-color); flex-shrink:0;">
-        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px; margin-bottom:0.35rem;">📌 Recent Patients</div>
-        <div id="recent-patients-list" style="display:flex; flex-direction:column; gap:2px;"></div>
-      </div>
+        <!-- Recent Patients Section -->
+        <div id="sidebar-recent" style="padding:0.5rem 0.75rem; border-bottom:1px solid #14352e; flex-shrink:0;">
+          <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; color:#a3b8b0; letter-spacing:0.5px; margin-bottom:0.35rem;">📌 Recent Patients</div>
+          <div id="recent-patients-list" style="display:flex; flex-direction:column; gap:2px;"></div>
+        </div>
 
-      <nav class="sidebar-menu" id="sidebar-menu">
-        <!-- Rendered dynamically by app.js from planConfig.js -->
-      </nav>
+        <nav class="sidebar-menu" id="sidebar-menu">
+          <!-- Rendered dynamically by app.js from planConfig.js -->
+        </nav>
+      </div>
 
       <div class="sidebar-footer">
         <div class="doctor-profile-card">
@@ -70,13 +140,14 @@
             <span style="font-size:0.7rem;">▼</span>
           </div>
 
-          <div style="margin-left:1rem; display:inline-block;">
+          <div class="clinic-select-wrap" style="display:inline-block;">
             <select class="form-control" style="padding:4px 8px; font-size:0.8rem; background:var(--bg-surface); color:var(--text-color); border:1px solid var(--border-color); border-radius:6px;" onchange="app.showToast('Active Clinic Context: ' + this.options[this.selectedIndex].text)">
               <option value="BR-01">🏥 Beverly Hills Central (HQ)</option>
               <option value="BR-02">🏥 Westside Implant & Ortho</option>
               <option value="BR-03">🏥 Downtown Smile Hub</option>
             </select>
           </div>
+        </div>
 
         <div class="header-right">
           <!-- Global Search (Ctrl+K) -->
@@ -174,10 +245,14 @@
         <button class="close-btn" onclick="app.closeModal()">✕</button>
       </div>
       <div id="modal-body"></div>
+    </div>
   </div>
 
   <!-- Toast Container -->
   <div id="toast-container"></div>
+
+  <!-- 3D Graphics Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <!-- Scripts -->
   <script src="js/seedData.js"></script>
@@ -206,6 +281,7 @@
   <script src="js/modules/notifications.js"></script>
   <script src="js/modules/globalSearch.js"></script>
   <script src="js/modules/inbox.js"></script>
+  <script src="js/modules/auth.js"></script>
 
   <script src="js/app.js"></script>
 </body>

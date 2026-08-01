@@ -67,6 +67,27 @@ const PlanConfig = {
     }
   ],
 
+  ROLE_PERMISSIONS: {
+    admin: [
+      "inbox", "patients", "appointments", "calendar", "treatment-plan", "billing", "insurance",
+      "tooth-chart", "xray", "prescription", "inventory", "lab", "crm", "ai-assistant",
+      "multi-clinic", "staff", "patient-portal"
+    ],
+    doctor: [
+      "inbox", "patients", "appointments", "calendar", "treatment-plan", "billing",
+      "tooth-chart", "xray", "prescription", "lab", "patient-portal"
+    ],
+    receptionist: [
+      "inbox", "patients", "appointments", "calendar", "treatment-plan", "billing", "insurance", "crm"
+    ],
+    lab: [
+      "inbox", "lab", "xray", "inventory"
+    ],
+    patient: [
+      "patient-portal", "tooth-chart", "appointments", "prescription", "billing"
+    ]
+  },
+
   getActivePlan() {
     return localStorage.getItem(this.STORAGE_KEY) || this.PLANS.PREMIUM;
   },
@@ -85,6 +106,12 @@ const PlanConfig = {
       return this.isPremium();
     }
     return true;
+  },
+
+  canRoleAccess(viewName, role) {
+    if (!role || role === "admin") return this.canAccess(viewName);
+    const allowedForRole = this.ROLE_PERMISSIONS[role] || [];
+    return allowedForRole.includes(viewName) && this.canAccess(viewName);
   },
 
   getAllowedFeatures() {

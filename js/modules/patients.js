@@ -71,14 +71,14 @@ const PatientsModule = {
         </div>
 
         <div style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem; pt-3; border-top:1px solid var(--border-color); flex-wrap:wrap;">
-          <button class="btn btn-outline btn-sm" onclick="app.setActivePatient('${p.id}')">
+          <button class="btn ${isCurrent ? 'btn-primary' : 'btn-outline'} btn-sm" onclick="app.setActivePatient('${p.id}')">
             ${isCurrent ? '✓ Active Patient' : 'Select Patient'}
           </button>
           <button class="btn btn-secondary btn-sm" onclick="PatientsModule.openFullEDRModal('${p.id}')">
-            📄 Complete EDR Record
+            📄 EDR Record
           </button>
-          <button class="btn btn-secondary btn-sm" onclick="app.navigateTo('tooth-chart', '${p.id}')">
-            🦷 Tooth Chart
+          <button class="btn btn-primary btn-sm" style="font-weight:800;" onclick="app.navigateTo('tooth-chart', '${p.id}')">
+            🦷 Open 3D Tooth Chart
           </button>
         </div>
       </div>
@@ -143,9 +143,14 @@ const PatientsModule = {
   },
 
   openAddPatientModal() {
-    app.openModal("Register New Patient", `
+    app.openModal("👤 Register New Patient", `
       <form id="new-patient-form" onsubmit="PatientsModule.savePatient(event)">
-        <div class="form-grid">
+        
+        <!-- Demographics Section -->
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--primary); letter-spacing:0.5px; margin-bottom:0.75rem; border-bottom:1px solid var(--border-color); padding-bottom:0.35rem;">
+          📋 Patient Demographics
+        </div>
+        <div class="form-grid" style="margin-bottom:1.25rem;">
           <div class="form-group">
             <label>Full Name *</label>
             <input type="text" class="form-control" name="name" required placeholder="e.g. John Doe">
@@ -163,14 +168,6 @@ const PatientsModule = {
             </select>
           </div>
           <div class="form-group">
-            <label>Phone Number *</label>
-            <input type="tel" class="form-control" name="phone" required placeholder="+1 (555) 000-0000">
-          </div>
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" class="form-control" name="email" placeholder="patient@example.com">
-          </div>
-          <div class="form-group">
             <label>Blood Group</label>
             <select class="form-control" name="bloodGroup">
               <option value="A+">A+</option>
@@ -182,6 +179,28 @@ const PatientsModule = {
               <option value="AB+">AB+</option>
             </select>
           </div>
+        </div>
+
+        <!-- Contact Details Section -->
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--primary); letter-spacing:0.5px; margin-bottom:0.75rem; border-bottom:1px solid var(--border-color); padding-bottom:0.35rem;">
+          📞 Contact Information
+        </div>
+        <div class="form-grid" style="margin-bottom:1.25rem;">
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" class="form-control" name="phone" required placeholder="+1 (555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" class="form-control" name="email" placeholder="patient@example.com">
+          </div>
+        </div>
+
+        <!-- Medical History Section -->
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--primary); letter-spacing:0.5px; margin-bottom:0.75rem; border-bottom:1px solid var(--border-color); padding-bottom:0.35rem;">
+          🩺 Medical Alerts & History
+        </div>
+        <div class="form-grid">
           <div class="form-group full-width">
             <label>Known Allergies</label>
             <input type="text" class="form-control" name="allergies" placeholder="e.g. Penicillin, Latex, None">
@@ -191,9 +210,10 @@ const PatientsModule = {
             <textarea class="form-control" name="medicalHistory" rows="2" placeholder="e.g. Hypertension, Diabetes, Asthma..."></textarea>
           </div>
         </div>
-        <div style="margin-top:1.5rem; display:flex; justify-content:flex-end; gap:0.75rem;">
+
+        <div style="margin-top:1.5rem; pt-3; border-top:1px solid var(--border-color); display:flex; justify-content:flex-end; gap:0.75rem;">
           <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Patient</button>
+          <button type="submit" class="btn btn-primary" style="padding:0.6rem 1.4rem; font-weight:800;">✓ Save & Register Patient</button>
         </div>
       </form>
     `);
@@ -208,8 +228,39 @@ const PatientsModule = {
     
     const newPatient = store.addPatient(data);
     app.closeModal();
-    app.showToast(`Patient ${newPatient.name} registered successfully!`);
     app.setActivePatient(newPatient.id);
     this.render();
+
+    // Instant Confirmation Modal with 1-Click Tooth Chart Launcher
+    app.openModal("🎉 Patient Registered Successfully", `
+      <div style="padding:0.75rem 0; text-align:center;">
+        <div style="font-size:3.2rem; margin-bottom:0.5rem; animation:fadeInUp 0.3s ease;">🦷</div>
+        <h3 style="font-size:1.25rem; font-weight:800; color:var(--text-primary); margin-bottom:0.35rem;">
+          ${newPatient.name} (ID: ${newPatient.id}) Registered!
+        </h3>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.5rem;">
+          Default 32-tooth anatomical dentition chart created. Would you like to open the Tooth Chart now?
+        </p>
+
+        <div style="background:var(--bg-tertiary); padding:1rem; border-radius:var(--radius-lg); margin-bottom:1.5rem; text-align:left; border:1px solid var(--border-color);">
+          <div style="display:flex; justify-content:space-between; font-size:0.88rem; margin-bottom:0.35rem;">
+            <span>Patient ID & Name:</span> <strong>${newPatient.id} — ${newPatient.name}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.88rem; margin-bottom:0.35rem;">
+            <span>Demographics:</span> <strong>${newPatient.gender}, ${newPatient.age} yrs • ${newPatient.bloodGroup}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.88rem;">
+            <span>Phone & Contact:</span> <strong>${newPatient.phone}</strong>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:0.85rem; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="app.closeModal()">📋 View Patient Directory</button>
+          <button class="btn btn-primary" style="padding:0.65rem 1.4rem; font-weight:800; font-size:0.92rem;" onclick="app.closeModal(); app.navigateTo('tooth-chart', '${newPatient.id}');">
+            🦷 Open 3D Tooth Chart Now ➔
+          </button>
+        </div>
+      </div>
+    `);
   }
 };

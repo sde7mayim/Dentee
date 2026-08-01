@@ -114,10 +114,11 @@ const AppointmentsModule = {
     this.render();
   },
 
-  openNewAppointmentModal() {
+  openNewAppointmentModal(preselectedPatientId = null) {
     const patients = store.getPatients();
     const dentists = store.getDentists();
     const procedures = store.getProcedures();
+    const defaultPatientId = preselectedPatientId || app.currentPatientId;
 
     app.openModal("Book Dental Appointment", `
       <form id="new-apt-form" onsubmit="AppointmentsModule.saveAppointment(event)">
@@ -125,7 +126,7 @@ const AppointmentsModule = {
           <div class="form-group">
             <label>Select Patient *</label>
             <select class="form-control" name="patientId" required>
-              ${patients.map(p => `<option value="${p.id}">${p.name} (${p.id})</option>`).join("")}
+              ${patients.map(p => `<option value="${p.id}" ${p.id === defaultPatientId ? 'selected' : ''}>${p.name} (${p.id})</option>`).join("")}
             </select>
           </div>
           <div class="form-group">
@@ -186,5 +187,8 @@ const AppointmentsModule = {
     app.closeModal();
     app.showToast("Appointment booked successfully!");
     this.render();
+    if (typeof PatientPortalModule !== "undefined" && app.currentView === "patient-portal") {
+      PatientPortalModule.render();
+    }
   }
 };

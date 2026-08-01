@@ -16,7 +16,9 @@ const TreatmentPlanModule = {
 
     const patient = store.getPatientById(patientId);
     const plans = store.getTreatmentPlans(patientId);
-    const allPlans = store.getTreatmentPlans();
+
+    const directItems = Array.isArray(plans) ? plans.filter(p => p.cdtCode || p.procedure) : [];
+    const structuredPlans = Array.isArray(plans) ? plans.filter(p => p.phases) : [];
 
     container.innerHTML = `
       <div class="card">
@@ -32,15 +34,55 @@ const TreatmentPlanModule = {
           </div>
         </div>
 
+        <!-- 3D Tooth Chart Direct Procedure Items -->
+        ${directItems.length > 0 ? `
+          <div style="margin-bottom:1.5rem; background:var(--bg-tertiary); padding:1.25rem; border-radius:var(--radius-xl); border:1px solid var(--border-color);">
+            <h3 style="font-size:1.05rem; font-weight:800; margin-bottom:0.75rem; color:var(--primary); display:flex; align-items:center; gap:0.5rem;">
+              <span>🦷 Procedures Added from 3D Clinical Twin Studio</span>
+            </h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Tooth #</th>
+                  <th>CDT Code & Description</th>
+                  <th style="text-align:right;">Gross Fee</th>
+                  <th style="text-align:right;">Est. Insurance</th>
+                  <th style="text-align:right;">Patient Copay</th>
+                  <th style="text-align:center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${directItems.map(item => `
+                  <tr>
+                    <td>${item.date || new Date().toISOString().split("T")[0]}</td>
+                    <td><strong style="color:var(--primary);">Tooth #${item.tooth}</strong></td>
+                    <td><strong>${item.cdtCode}</strong> - ${item.procedure}</td>
+                    <td style="text-align:right; font-weight:700;">$${(item.cost || 0).toFixed(2)}</td>
+                    <td style="text-align:right; color:var(--success); font-weight:700;">-$${(item.insuranceCoverage || 0).toFixed(2)}</td>
+                    <td style="text-align:right; color:var(--primary); font-weight:800;">$${(item.copay || 0).toFixed(2)}</td>
+                    <td style="text-align:center;">
+                      <button class="btn btn-secondary btn-sm" onclick="app.showToast('Procedure #${item.id} sent to GST Invoice ledger!')">
+                        🧾 Invoice
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        ` : ''}
+
+        <!-- Structured Phased Plans -->
         <div style="display:grid; grid-template-columns: 1fr; gap:1.5rem;">
-          ${plans.length === 0 ? `
+          ${structuredPlans.length === 0 && directItems.length === 0 ? `
             <div style="text-align:center; padding:3rem; color:var(--text-muted); border:2px dashed var(--border-color); border-radius:12px;">
               <div style="font-size:2.5rem; margin-bottom:0.5rem;">📋</div>
               <h3>No Treatment Plan Found for ${patient ? patient.name : 'this patient'}</h3>
-              <p>Create a customized phased treatment plan, calculate costs, and send for patient digital signature approval.</p>
+              <p>Create a customized phased treatment plan or select procedures on the 3D Tooth Chart.</p>
               <button class="btn btn-primary btn-sm" style="margin-top:1rem;" onclick="TreatmentPlanModule.openCreatePlanModal('${patientId}')">+ Create Plan Now</button>
             </div>
-          ` : plans.map(plan => this.renderPlanCard(plan)).join('')}
+          ` : structuredPlans.map(plan => this.renderPlanCard(plan)).join('')}
         </div>
       </div>
     `;

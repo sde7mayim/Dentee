@@ -1,7 +1,57 @@
-[/* ==========================================================================
+/* ==========================================================================
    DENTEE - FULLY RESPONSIVE & MOBILE-FRIENDLY LAYOUT
-   Breakpoints: 1200px, 1024px, 768px, 480px
+   Breakpoints: 1200px (Desktop), 1024px (Tablet L), 768px (Tablet P), 576px (Mobile L), 414px/360px (Mobile P)
    ========================================================================== */
+
+/* ==================== TOUCH & UTILITY DEFAULTS ==================== */
+.table-responsive,
+.scrollable-x-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.scrollable-x-container::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollable-x-container::-webkit-scrollbar-thumb,
+.table-responsive::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: var(--radius-full);
+  opacity: 0.5;
+}
+
+/* Quadrant Filter Tabs for Mobile Tooth Chart */
+.quadrant-tabs {
+  display: none;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.quadrant-tab-btn {
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quadrant-tab-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
 
 /* ==================== LARGE DESKTOP (max 1200px) ==================== */
 @media (max-width: 1200px) {
@@ -25,6 +75,10 @@
 /* ==================== TABLET / SMALL DESKTOP (max 1024px) ==================== */
 @media (max-width: 1024px) {
   #arch-stage-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dental-twin-studio-grid {
     grid-template-columns: 1fr !important;
   }
 
@@ -59,53 +113,64 @@
   }
 }
 
-/* ==================== TABLET (max 768px) ==================== */
+/* ==================== TABLET & MOBILE (max 768px) ==================== */
 @media (max-width: 768px) {
-  /* Collapsible Sidebar */
+  /* Collapsible Sidebar Overlay Fix */
   .sidebar {
-    width: 0;
-    overflow: hidden;
-    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%);
+    overflow-y: auto;
+    z-index: 1000 !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: none;
   }
 
   .sidebar.open {
-    width: 280px;
-    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.15);
+    transform: translateX(0);
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.25);
   }
 
   .main-wrapper {
-    margin-left: 0;
+    margin-left: 0 !important;
     width: 100%;
   }
 
   /* Mobile Hamburger */
   .mobile-menu-btn {
     display: flex !important;
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-full);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
     background: var(--bg-tertiary);
     align-items: center;
     justify-content: center;
-    color: var(--text-secondary);
-    font-size: 1.2rem;
+    color: var(--text-primary);
+    font-size: 1.25rem;
     cursor: pointer;
-    border: none;
+    border: 1px solid var(--border-color);
     transition: background var(--transition-fast);
+    flex-shrink: 0;
   }
 
   .mobile-menu-btn:hover {
     background: var(--bg-hover);
   }
 
-  /* Sidebar Overlay */
+  /* Sidebar Overlay Backdrop */
   .sidebar-overlay {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 999;
     opacity: 0;
     pointer-events: none;
@@ -119,27 +184,35 @@
 
   /* Header adjustments */
   .top-header {
-    padding: 0 1rem;
+    padding: 0.6rem 1rem;
     height: auto;
-    min-height: 60px;
+    min-height: 64px;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    gap: 0.6rem;
   }
 
   .header-left {
     gap: 0.5rem;
     flex-wrap: wrap;
+    flex: 1 1 auto;
+    align-items: center;
   }
 
   .header-right {
-    gap: 0.4rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
   }
 
   .patient-quick-select {
-    font-size: 0.75rem;
-    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    max-width: 100%;
+  }
+
+  .clinic-select-wrap {
+    margin-left: 0 !important;
   }
 
   .search-box {
@@ -148,22 +221,30 @@
   }
 
   .search-box input {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     padding: 0.5rem 1rem 0.5rem 2.2rem;
   }
 
-  /* Content */
+  /* Content area spacing */
   .content-area {
     padding: 1rem;
   }
 
   .page-title {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 
   .page-title-bar {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .page-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
   }
 
   /* Stats grid */
@@ -177,15 +258,10 @@
   }
 
   .stat-val {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 
-  /* Tables - make horizontally scrollable */
-  .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
+  /* Data Tables */
   .data-table th,
   .data-table td {
     padding: 0.65rem 0.6rem;
@@ -215,9 +291,23 @@
     padding: 2px 4px;
   }
 
-  /* Tooth chart */
+  /* Tooth Chart Responsive Wrapper */
+  .tooth-chart-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+
+  .tooth-arch-container {
+    min-width: 600px;
+  }
+
+  .quadrant-tabs {
+    display: flex;
+  }
+
   .tooth-card {
-    width: 38px;
+    width: 36px;
     padding: 4px 2px;
   }
 
@@ -253,19 +343,25 @@
 
   /* Charts & Analytics */
   .reports-chart {
-    height: 200px !important;
+    height: 220px !important;
   }
 
   /* Modal */
   .modal-card {
-    width: 95%;
-    max-height: 85vh;
+    width: 94%;
+    max-height: 88vh;
     padding: 1.25rem;
+    border-radius: var(--radius-lg);
   }
 
-  /* X-Ray */
+  /* X-Ray Studio */
   .xray-viewport {
-    height: 280px;
+    height: 300px;
+  }
+
+  .xray-controls {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   /* Inbox */
@@ -273,25 +369,28 @@
     grid-template-columns: 1fr;
   }
 
-  /* Search palette */
+  /* Global Search palette */
   .search-palette {
-    width: 95% !important;
-    max-width: 95% !important;
+    width: 94% !important;
+    max-width: 94% !important;
+    top: 10% !important;
   }
 
-  /* Notifications dropdown */
+  /* Notifications dropdown fixed overlay */
   .notif-dropdown {
     position: fixed !important;
-    top: 60px !important;
-    right: 10px !important;
-    left: 10px !important;
+    top: 64px !important;
+    right: 12px !important;
+    left: 12px !important;
     width: auto !important;
     max-width: 100% !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    z-index: 1050 !important;
   }
 }
 
-/* ==================== MOBILE (max 480px) ==================== */
-@media (max-width: 480px) {
+/* ==================== SMALL MOBILE (max 576px / 480px) ==================== */
+@media (max-width: 576px) {
   .grid-stats {
     grid-template-columns: 1fr;
   }
@@ -303,21 +402,17 @@
 
   .header-left,
   .header-right {
-    justify-content: center;
+    justify-content: space-between;
     width: 100%;
-  }
-
-  .header-right {
-    justify-content: flex-end;
   }
 
   .patient-quick-select {
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
   }
 
   .page-title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
 
   .content-area {
@@ -330,12 +425,13 @@
 
   .calendar-cell {
     min-height: 55px;
+    padding: 2px;
     font-size: 0.65rem;
   }
 
   .calendar-day-header {
     font-size: 0.65rem;
-    padding: 0.3rem;
+    padding: 0.3rem 2px;
   }
 
   .cell-number {
@@ -357,62 +453,98 @@
   }
 
   .btn {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.8rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.85rem;
+    min-height: 42px;
   }
 
   .btn-sm {
-    padding: 0.3rem 0.5rem;
-    font-size: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.78rem;
+    min-height: 36px;
   }
 
+  /* Modal Bottom Sheet / Compact View */
   .modal-card {
     padding: 1rem;
+    width: 96%;
+    max-height: 90vh;
   }
 
   .modal-title {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
   .card {
-    padding: 0.75rem;
+    padding: 0.85rem;
   }
 
   .stat-card {
-    padding: 0.75rem;
+    padding: 0.85rem;
   }
 
   .stat-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
+    width: 38px;
+    height: 38px;
+    font-size: 1.05rem;
   }
 
   .stat-val {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
 
-  /* Sidebar full screen on mobile */
+  /* Full screen width sidebar on small phones */
   .sidebar.open {
-    width: 100vw;
+    width: 88vw;
   }
 
-  /* Notification dropdown full width */
-  .notif-dropdown {
-    left: 10px !important;
-    right: 10px !important;
-  }
-
-  /* Make touch targets bigger */
+  /* Make touch targets bigger and comfortable */
   .nav-item {
     padding: 0.85rem 1rem;
+    min-height: 48px;
   }
 
   button, 
   .btn, 
-  .nav-item,
-  .icon-btn {
+  .icon-btn,
+  .form-control,
+  select,
+  input {
     min-height: 44px;
+    font-size: 16px !important; /* Prevents iOS auto-zoom on input focus */
+  }
+
+  /* Stack actions in patient/billing/treatment header bars */
+  .filter-bar,
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+
+  .filter-bar input,
+  .filter-bar select,
+  .action-bar button {
+    width: 100% !important;
+  }
+}
+
+/* ==================== EXTRA SMALL PHONES (max 375px) ==================== */
+@media (max-width: 375px) {
+  .content-area {
+    padding: 0.5rem;
+  }
+
+  .card, .stat-card {
+    padding: 0.65rem;
+  }
+
+  .page-title {
+    font-size: 1.05rem;
+  }
+
+  .sidebar.open {
+    width: 95vw;
   }
 }
 
@@ -454,14 +586,8 @@
 
 /* ==================== TOUCH DEVICE OPTIMIZATIONS ==================== */
 @media (hover: none) and (pointer: coarse) {
-  .stat-card:hover {
-    transform: none;
-  }
-
-  .card:hover {
-    transform: none;
-  }
-
+  .stat-card:hover,
+  .card:hover,
   .nav-item:hover {
     transform: none;
   }
@@ -477,7 +603,7 @@
 /* ==================== TALL SCREENS ==================== */
 @media (min-height: 900px) {
   .content-area {
-    padding: 2rem;
+    padding: 1.75rem;
   }
 }
 
@@ -491,4 +617,3 @@
     padding: 2rem 2.5rem;
   }
 }
-

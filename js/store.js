@@ -124,7 +124,7 @@ class DenteeStore {
   }
 
   /* --------------------------------------------------------------------------
-     3. PROCEDURES API
+     3. PROCEDURES & TREATMENT PLANS API
      -------------------------------------------------------------------------- */
   getProcedures() {
     return this.state.procedures;
@@ -133,6 +133,28 @@ class DenteeStore {
   addProcedure(proc) {
     this.state.procedures.push(proc);
     this.saveState();
+  }
+
+  getTreatmentPlans(patientId) {
+    if (!this.state.treatmentPlans) {
+      this.state.treatmentPlans = {};
+    }
+    if (!this.state.treatmentPlans[patientId]) {
+      this.state.treatmentPlans[patientId] = [];
+    }
+    return this.state.treatmentPlans[patientId];
+  }
+
+  addTreatmentPlanItem(patientId, itemData) {
+    const plans = this.getTreatmentPlans(patientId);
+    const newItem = {
+      id: `TP-${Math.floor(1000 + Math.random() * 9000)}`,
+      date: new Date().toISOString().split("T")[0],
+      ...itemData
+    };
+    plans.unshift(newItem);
+    this.saveState();
+    return newItem;
   }
 
   /* --------------------------------------------------------------------------
@@ -320,6 +342,20 @@ class DenteeStore {
     this.state.treatmentPlans.unshift(newPlan);
     this.saveState();
     return newPlan;
+  }
+
+  addTreatmentPlanItem(patientId, itemData) {
+    if (!this.state.treatmentPlans) this.state.treatmentPlans = [];
+    const newItem = {
+      id: `TPI-${Math.floor(1000 + Math.random() * 9000)}`,
+      patientId: patientId,
+      date: new Date().toISOString().split("T")[0],
+      status: "Planned",
+      ...itemData
+    };
+    this.state.treatmentPlans.unshift(newItem);
+    this.saveState();
+    return newItem;
   }
 
   approveTreatmentPlan(planId, signatureData) {

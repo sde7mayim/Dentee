@@ -13,12 +13,25 @@ const app = {
   init() {
     this.loadTheme();
     this.applyGlassmorphism();
+    if (typeof AuthModule !== "undefined") {
+      AuthModule.init();
+    }
     this.renderSidebar();
     this.renderSidebarExtras();
     this.attachNavigation();
     this.applyPlanUI();
     this.updateActivePatientLabel();
-    this.navigateTo(this.currentView);
+    this.updateActiveUserUI();
+
+    const currentUser = typeof AuthModule !== "undefined" ? AuthModule.getCurrentUser() : null;
+    let initialView = this.currentView;
+    if (currentUser) {
+      if (currentUser.role === "patient") initialView = "patient-portal";
+      else if (currentUser.role === "lab") initialView = "lab";
+      else if (currentUser.role === "receptionist") initialView = "appointments";
+    }
+
+    this.navigateTo(initialView);
     
     // Initialize new modules
     if (typeof GlobalSearchModule !== "undefined") {
@@ -27,55 +40,94 @@ const app = {
     if (typeof NotificationModule !== "undefined") {
       NotificationModule.init();
     }
-
-    this.showToast("✨ Dentee enhanced with glassmorphism, global search (Ctrl+K), notifications & more!");
   },
 
-  loadTheme() {
-    const savedTheme = localStorage.getItem("DENTEE_THEME") || "light";
-    this.theme = savedTheme;
-    document.documentElement.setAttribute("data-theme", savedTheme);
-  },
+  updateActiveUserUI() {
+    const user = typeof AuthModule !== "undefined" ? AuthModule.getCurrentUser() : {
+      name: "Dr. S. Jenkins",
+      roleLabel: "Super Admin",
+      avatar: "🛡️"
+    };
 
-  toggleTheme() {
-    this.theme = this.theme === "light" ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", this.theme);
-    localStorage.setItem("DENTEE_THEME", this.theme);
-    this.showToast(`Switched to ${this.theme.toUpperCase()} theme mode.`);
-  },
-
-  applyGlassmorphism() {
-    // Apply glass effect classes to main layout elements
-    const sidebar = document.querySelector(".sidebar");
-    if (sidebar) sidebar.classList.add("glass");
-    
-    const header = document.querySelector(".top-header");
-    if (header) header.classList.add("glass");
-    
-    const modalCard = document.querySelector(".modal-card");
-    if (modalCard) modalCard.classList.add("glass");
-    
+    // Update Sidebar Footer Profile Card
     const profileCard = document.querySelector(".doctor-profile-card");
-    if (profileCard) profileCard.classList.add("glass");
+    if (profileCard) {
+      profileCard.innerHTML = `
+        <div class="doctor-avatar" style="background:var(--primary); font-size:1.1rem; display:flex; align-items:center; justify-content:center;">${user.avatar || '👤'}</div>
+        <div class="doctor-info" style="overflow:hidden;">
+          <div class="doctor-name" style="font-weight:800; font-size:0.85rem; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${user.name}</div>
+          <div class="doctor-role" style="font-size:0.72rem; color:#a3b8b0;">${user.roleLabel || 'User'}</div>
+        </div>
+        <button onclick="AuthModule.logout()" style="margin-left:auto; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; border-radius:6px; padding:3px 8px; font-size:0.7rem; font-weight:800; cursor:pointer;" title="Sign Out">
+          🚪 Exit
+        </button>
+      `;
+    }
+
+    // Update Top Header User Badge
+    const headerProfileBtn = document.getElementById("btn-header-profile");
+    if (headerProfileBtn) {
+      headerProfileBtn.innerHTML = `
+        <span style="font-size:1rem;">${user.avatar || '👤'}</span>
+        <span style="font-weight:800; font-size:0.85rem; color:var(--text-primary);">${user.name}</span>
+        <span class="badge" style="font-size:0.68rem; background:var(--primary-light); color:var(--primary); font-weight:900; padding:2px 8px; border-radius:var(--radius-full);">
+          ${(user.role || 'admin').toUpperCase()}
+        </span>
+      `;
+      headerProfileBtn.onclick = () => {
+        if (confirm(`Sign out of ${user.name} (${user.roleLabel})?`)) {
+          AuthModule.logout();
+        }
+      };
+    }
+  },
+
+  handleNavClick(viewName) {
+    if (!PlanConfig.canAccess(viewName)) {
+      this.showToast("This module requires the Premium plan.");
+      return;
+    }
+    if (typeof AuthModule !== "undefined" && !AuthModule.hasPermission(viewName)) {
+      const user = AuthModule.getCurrentUser();
+      this.showToast(`⛔ Access Restricted: ${user ? user.roleLabel : 'User'} cannot access ${viewName.toUpperCase()}`);
+      return;
+    }
+    this.navigateTo(viewName);
+
+    if (window.innerWidth <= 768) {
+      this.closeMobileSidebar();
+    }
   },
 
   renderSidebar() {
     const menu = document.getElementById("sidebar-menu");
     if (!menu || typeof PlanConfig === "undefined") return;
 
-    menu.innerHTML = PlanConfig.NAV_SECTIONS.map(section => `
-      <div class="menu-category">${section.label}</div>
-      ${section.items.map(item => `
-        <div class="nav-item${item.view === this.currentView ? " active" : ""}"
-             data-view="${item.view}"
-             data-tier="${section.tier}"
-             id="nav-${item.view}">
-          <span class="icon">${item.icon}</span>
-          <span class="nav-label">${item.label}</span>
-          ${section.tier === "premium" ? '<span class="nav-lock-badge">★</span>' : ""}
-        </div>
-      `).join("")}
-    `).join("");
+    const user = typeof AuthModule !== "undefined" ? AuthModule.getCurrentUser() : null;
+
+    menu.innerHTML = PlanConfig.NAV_SECTIONS.map(section => {
+      const allowedItems = section.items.filter(item => {
+        return typeof AuthModule === "undefined" || AuthModule.hasPermission(item.view);
+      });
+
+      if (allowedItems.length === 0) return "";
+
+      return `
+        <div class="menu-category">${section.label}</div>
+        ${allowedItems.map(item => `
+          <div class="nav-item${item.view === this.currentView ? " active" : ""}"
+               data-view="${item.view}"
+               data-tier="${section.tier}"
+               id="nav-${item.view}"
+               onclick="app.handleNavClick('${item.view}')"
+               style="cursor:pointer; position:relative; z-index:10;">
+            <span class="icon" style="pointer-events:none;">${item.icon}</span>
+            <span class="nav-label" style="pointer-events:none;">${item.label}</span>
+            ${section.tier === "premium" ? '<span class="nav-lock-badge" style="pointer-events:none;">★</span>' : ""}
+          </div>
+        `).join("")}
+      `;
+    }).join("");
   },
 
   renderSidebarExtras() {
@@ -238,6 +290,17 @@ const app = {
   },
 
   navigateTo(viewName, patientId = null) {
+    if (typeof AuthModule !== "undefined" && !AuthModule.hasPermission(viewName)) {
+      const user = AuthModule.getCurrentUser();
+      this.showToast(`⛔ Access Restricted: ${user.roleLabel} role cannot access ${viewName.toUpperCase()}`);
+      
+      // Fallback view per role
+      if (user.role === "patient") viewName = "patient-portal";
+      else if (user.role === "lab") viewName = "lab";
+      else if (user.role === "receptionist") viewName = "appointments";
+      else viewName = "patients";
+    }
+
     if (!PlanConfig.canAccess(viewName)) {
       this.showToast("This module requires the Premium plan.");
       viewName = "patients";

@@ -343,41 +343,182 @@ const BillingModule = {
     `);
   },
 
+  activePaymentTab: "card",
+  currentGatewayInvId: null,
+  currentGatewayAmount: 0,
+
   openPaymentGateway(invId, amountDue) {
-    const inv = store.getInvoices().find(i => i.id === invId);
+    this.activePaymentTab = "card";
+    this.currentGatewayInvId = invId;
+    this.currentGatewayAmount = amountDue;
+    this.renderPaymentGatewayModal();
+  },
+
+  switchPaymentTab(tabName) {
+    this.activePaymentTab = tabName;
+    this.renderPaymentGatewayModal();
+  },
+
+  renderPaymentGatewayModal() {
+    const invId = this.currentGatewayInvId;
+    const amountDue = this.currentGatewayAmount || 0;
+    const tab = this.activePaymentTab || "card";
+
+    let tabContentHTML = "";
+
+    if (tab === "card") {
+      tabContentHTML = `
+        <div style="background:var(--bg-tertiary); padding:1.15rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); margin-bottom:1.25rem; text-align:left;">
+          <div style="font-size:0.8rem; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.75rem; display:flex; justify-content:space-between; align-items:center;">
+            <span>💳 Credit / Debit Card Checkout</span>
+            <span style="font-size:0.7rem; background:#10b981; color:white; padding:2px 8px; border-radius:4px; font-weight:800;">🔒 SSL ENCRYPTED</span>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0.85rem;">
+            <label style="font-size:0.8rem; font-weight:700;">Card Number *</label>
+            <input type="text" class="form-control" placeholder="4532 8901 2345 6789" value="4532 8901 2345 6789" required>
+          </div>
+
+          <div class="form-grid" style="margin-bottom:0.85rem; display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+            <div class="form-group">
+              <label style="font-size:0.8rem; font-weight:700;">Expiry Date *</label>
+              <input type="text" class="form-control" placeholder="MM/YY" value="08/28" required>
+            </div>
+            <div class="form-group">
+              <label style="font-size:0.8rem; font-weight:700;">CVV / CVC *</label>
+              <input type="password" class="form-control" placeholder="•••" value="882" maxlength="4" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="font-size:0.8rem; font-weight:700;">Cardholder Name *</label>
+            <input type="text" class="form-control" placeholder="Full Name on Card" value="Sophia Martinez" required>
+          </div>
+        </div>
+      `;
+    } else if (tab === "upi") {
+      tabContentHTML = `
+        <div style="background:var(--bg-tertiary); padding:1.15rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); margin-bottom:1.25rem; text-align:center;">
+          <div style="font-size:0.8rem; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.75rem;">
+            📲 Instant UPI QR Code & VPA Checkout
+          </div>
+
+          <div style="background:white; padding:1rem; border-radius:12px; display:inline-block; border:1.5px solid var(--border-color); margin-bottom:0.85rem; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+            <svg viewBox="0 0 160 160" width="140" height="140">
+              <rect width="160" height="160" fill="#ffffff"/>
+              <rect x="10" y="10" width="40" height="40" fill="#09221d"/><rect x="18" y="18" width="24" height="24" fill="#ffffff"/><rect x="24" y="24" width="12" height="12" fill="#09221d"/>
+              <rect x="110" y="10" width="40" height="40" fill="#09221d"/><rect x="118" y="18" width="24" height="24" fill="#ffffff"/><rect x="124" y="24" width="12" height="12" fill="#09221d"/>
+              <rect x="10" y="110" width="40" height="40" fill="#09221d"/><rect x="18" y="118" width="24" height="24" fill="#ffffff"/><rect x="24" y="124" width="12" height="12" fill="#09221d"/>
+              <rect x="60" y="20" width="10" height="20" fill="#09221d"/><rect x="80" y="10" width="20" height="10" fill="#09221d"/>
+              <rect x="60" y="60" width="40" height="40" fill="#c0eb38"/><path d="M 70,75 L 80,90 L 95,70" stroke="#09221d" stroke-width="4" fill="none"/>
+              <rect x="20" y="60" width="15" height="15" fill="#09221d"/><rect x="110" y="60" width="20" height="10" fill="#09221d"/>
+              <rect x="60" y="110" width="15" height="25" fill="#09221d"/><rect x="90" y="120" width="30" height="15" fill="#09221d"/>
+            </svg>
+            <div style="font-size:0.75rem; color:#64748b; margin-top:0.4rem; font-weight:700;">Scan with GPay, PhonePe, Paytm, BHIM</div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.5rem; justify-content:center;">
+            <input type="text" class="form-control" placeholder="Enter VPA / UPI ID (e.g. name@upi)" value="sophia@okaxis" style="max-width:240px; font-weight:600;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.showToast('UPI Collect request sent to sophia@okaxis!')">Verify Request</button>
+          </div>
+        </div>
+      `;
+    } else if (tab === "netbanking") {
+      tabContentHTML = `
+        <div style="background:var(--bg-tertiary); padding:1.15rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); margin-bottom:1.25rem; text-align:left;">
+          <div style="font-size:0.8rem; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.75rem;">
+            🏦 Select NetBanking Partner Bank
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.5rem; margin-bottom:1rem;">
+            <button type="button" class="btn btn-outline btn-sm" style="padding:0.5rem; text-align:center; font-weight:700; font-size:0.78rem;" onclick="app.showToast('Selected HDFC Bank NetBanking')">🏛️ HDFC Bank</button>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:0.5rem; text-align:center; font-weight:700; font-size:0.78rem;" onclick="app.showToast('Selected ICICI Bank NetBanking')">🏛️ ICICI Bank</button>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:0.5rem; text-align:center; font-weight:700; font-size:0.78rem;" onclick="app.showToast('Selected State Bank of India')">🏛️ SBI</button>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:0.5rem; text-align:center; font-weight:700; font-size:0.78rem;" onclick="app.showToast('Selected Axis Bank NetBanking')">🏛️ Axis Bank</button>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:0.5rem; text-align:center; font-weight:700; font-size:0.78rem;" onclick="app.showToast('Selected Chase Bank')">🏛️ Chase Bank</button>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:0.5rem; text-align:center; font-weight:700; font-size:0.78rem;" onclick="app.showToast('Selected Citi Bank')">🏛️ Citi Bank</button>
+          </div>
+
+          <div class="form-group">
+            <label style="font-size:0.8rem; font-weight:700;">Or Select Other Banking Institution:</label>
+            <select class="form-control">
+              <option value="hdfc">HDFC Bank NetBanking</option>
+              <option value="icici">ICICI Bank Internet Banking</option>
+              <option value="sbi">State Bank of India</option>
+              <option value="axis">Axis Bank Retail</option>
+              <option value="kotak">Kotak Mahindra Bank</option>
+              <option value="boa">Bank of America</option>
+              <option value="wellsfargo">Wells Fargo Online</option>
+            </select>
+          </div>
+        </div>
+      `;
+    } else if (tab === "emi") {
+      const emi3 = (amountDue / 3).toFixed(2);
+      const emi6 = (amountDue / 6).toFixed(2);
+      const emi12 = ((amountDue * 1.09) / 12).toFixed(2);
+
+      tabContentHTML = `
+        <div style="background:var(--bg-tertiary); padding:1.15rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); margin-bottom:1.25rem; text-align:left;">
+          <div style="font-size:0.8rem; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.75rem;">
+            📊 0% Interest & Flexible Credit Card EMI Options
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:0.55rem;">
+            
+            <label style="display:flex; align-items:center; background:var(--bg-card); padding:0.65rem 0.85rem; border-radius:var(--radius-md); border:1.5px solid #0d332b; cursor:pointer;">
+              <input type="radio" name="emi_option" checked style="margin-right:0.6rem;">
+              <div>
+                <strong style="font-size:0.85rem; color:#09221d;">3 Months Plan @ 0% Interest</strong>
+                <div style="font-size:0.72rem; color:var(--text-muted);">Zero processing fee • Instant approval</div>
+              </div>
+              <span style="font-size:0.95rem; font-weight:900; color:#0d332b; margin-left:auto;">$${emi3} / mo</span>
+            </label>
+
+            <label style="display:flex; align-items:center; background:var(--bg-card); padding:0.65rem 0.85rem; border-radius:var(--radius-md); border:1px solid var(--border-color); cursor:pointer;">
+              <input type="radio" name="emi_option" style="margin-right:0.6rem;">
+              <div>
+                <strong style="font-size:0.85rem; color:#09221d;">6 Months Plan @ 0% Interest</strong>
+                <div style="font-size:0.72rem; color:var(--text-muted);">Zero processing fee • Flexible tenure</div>
+              </div>
+              <span style="font-size:0.95rem; font-weight:900; color:#0d332b; margin-left:auto;">$${emi6} / mo</span>
+            </label>
+
+            <label style="display:flex; align-items:center; background:var(--bg-card); padding:0.65rem 0.85rem; border-radius:var(--radius-md); border:1px solid var(--border-color); cursor:pointer;">
+              <input type="radio" name="emi_option" style="margin-right:0.6rem;">
+              <div>
+                <strong style="font-size:0.85rem; color:#09221d;">12 Months Low Cost Plan (9% p.a.)</strong>
+                <div style="font-size:0.72rem; color:var(--text-muted);">Lowest monthly out-of-pocket payment</div>
+              </div>
+              <span style="font-size:0.95rem; font-weight:900; color:#0d332b; margin-left:auto;">$${emi12} / mo</span>
+            </label>
+
+          </div>
+        </div>
+      `;
+    }
 
     const bodyHTML = `
-      <div style="text-align:center; max-width:450px; margin:0 auto;">
-        <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">Online Payment for Invoice <strong>${invId}</strong></div>
-        <div style="font-size:1.8rem; font-weight:900; color:var(--primary-color); margin-bottom:1.25rem;">
+      <div style="text-align:center; max-width:480px; margin:0 auto;">
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.35rem;">Online Payment for Invoice <strong>${invId}</strong></div>
+        <div style="font-size:1.8rem; font-weight:900; color:var(--primary); margin-bottom:1.25rem;">
           Amount Due: $${amountDue.toFixed(2)}
         </div>
 
-        <div style="display:flex; justify-content:center; gap:0.5rem; margin-bottom:1.25rem;">
-          <button class="btn btn-secondary btn-sm active" onclick="app.showToast('Selected Credit/Debit Card')">💳 Card</button>
-          <button class="btn btn-secondary btn-sm" onclick="app.showToast('Selected Instant UPI QR Code')">📲 UPI QR</button>
-          <button class="btn btn-secondary btn-sm" onclick="app.showToast('Selected Net Banking')">🏦 NetBanking</button>
-          <button class="btn btn-secondary btn-sm" onclick="app.showToast('Selected 0% Interest EMI')">📊 EMI Options</button>
+        <!-- Interactive 4-Tab Navigation Header -->
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0.4rem; margin-bottom:1.25rem;">
+          <button type="button" class="btn ${tab === 'card' ? 'btn-primary' : 'btn-secondary'} btn-sm" style="padding:0.6rem 0.3rem; font-weight:800; font-size:0.78rem;" onclick="BillingModule.switchPaymentTab('card')">💳 Card</button>
+          <button type="button" class="btn ${tab === 'upi' ? 'btn-primary' : 'btn-secondary'} btn-sm" style="padding:0.6rem 0.3rem; font-weight:800; font-size:0.78rem;" onclick="BillingModule.switchPaymentTab('upi')">📲 UPI QR</button>
+          <button type="button" class="btn ${tab === 'netbanking' ? 'btn-primary' : 'btn-secondary'} btn-sm" style="padding:0.6rem 0.3rem; font-weight:800; font-size:0.78rem;" onclick="BillingModule.switchPaymentTab('netbanking')">🏦 NetBanking</button>
+          <button type="button" class="btn ${tab === 'emi' ? 'btn-primary' : 'btn-secondary'} btn-sm" style="padding:0.6rem 0.3rem; font-weight:800; font-size:0.78rem;" onclick="BillingModule.switchPaymentTab('emi')">📊 EMI Options</button>
         </div>
 
-        <!-- Simulated UPI QR Code Renderer -->
-        <div style="background:white; padding:1.25rem; border-radius:12px; display:inline-block; border:1px solid #e2e8f0; margin-bottom:1.25rem;">
-          <div style="width:160px; height:160px; background:#000; margin:0 auto; display:flex; align-items:center; justify-content:center; color:white; font-family:monospace; font-size:0.75rem; text-align:center; padding:10px;">
-            [SIMULATED UPI / CARD SECURE PAYMENT QR CODE]
-          </div>
-          <div style="font-size:0.75rem; color:#64748b; margin-top:0.5rem;">Scan with GPay, PhonePe, Paytm, or Banking App</div>
-        </div>
+        <!-- Dynamic Selected Tab Content -->
+        ${tabContentHTML}
 
-        <!-- EMI Calculator Preview -->
-        <div style="background:var(--bg-body); padding:0.75rem; border-radius:8px; font-size:0.8rem; margin-bottom:1.25rem; text-align:left;">
-          <div style="font-weight:700; margin-bottom:0.25rem;">💡 Low-Cost EMI Option Breakdown:</div>
-          <div>• 3 Months Plan: <strong>$${(amountDue / 3).toFixed(2)} / mo</strong></div>
-          <div>• 6 Months Plan: <strong>$${(amountDue / 6).toFixed(2)} / mo</strong></div>
-        </div>
-
-        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
-          <button class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
-          <button class="btn btn-primary" onclick="BillingModule.confirmPayment('${invId}', ${amountDue})">
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1rem;">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" style="padding:0.65rem 1.4rem; font-weight:800;" onclick="BillingModule.confirmPayment('${invId}', ${amountDue})">
             ⚡ Process Payment & Issue Receipt
           </button>
         </div>
